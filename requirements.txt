@@ -31,3 +31,5 @@ termcolor
 uvicorn
 fastapi
 joblib
+streamlit
+requests
