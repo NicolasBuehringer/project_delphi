@@ -40,6 +40,6 @@ wedges, labels=plt.pie(val, wedgeprops=dict(width=0.4,edgecolor='w'),labels=labe
 # I tried this method
 wedges[-1].set_visible(False)
 
-col1.markdown("Our prediction")
+col1.markdown("Our Forecast")
 col1.pyplot(fig1)
-col2.markdown("Some random text")
+col2.markdown("Some random text about our forecast")
