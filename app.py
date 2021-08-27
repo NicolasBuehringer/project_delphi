@@ -13,16 +13,23 @@ st.set_page_config(layout="wide")
 # ---------------------------------------------------------
 
 # Forecast from Delphi API
-url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
+#url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
 
-response = requests.get(url_delphi).json()
-AFD_forecast = float(response.get("AFD", 0.0))
-CDU_forecast = float(response.get("CDU", 0.0))
-FDP_forecast = float(response.get("FDP", 0.0))
-GRUENE_forecast = float(response.get("GRUENE", 0.0))
-LINKE_forecast = float(response.get("LINKE", 0.0))
-SPD_forecast = float(response.get("SPD", 0.0))
-OTHER_forecast = float(response.get("OTHER", 0.0))
+#response = requests.get(url_delphi).json()
+#AFD_forecast = float(response.get("AFD", 0.0))
+#CDU_forecast = float(response.get("CDU", 0.0))
+#FDP_forecast = float(response.get("FDP", 0.0))
+#GRUENE_forecast = float(response.get("GRUENE", 0.0))
+#LINKE_forecast = float(response.get("LINKE", 0.0))
+#SPD_forecast = float(response.get("SPD", 0.0))
+#OTHER_forecast = float(response.get("OTHER", 0.0))
+AFD_forecast = 10.61
+CDU_forecast = 21.97
+FDP_forecast = 10.33
+GRUENE_forecast = 19.69
+LINKE_forecast = 7.11
+SPD_forecast = 19.59
+OTHER_forecast = 10.7
 
 # Current poll from DAWUM API OR Delphi API
 # Dummy values (to be updated)
@@ -136,7 +143,7 @@ using a state-of-the art deep learning algorithm trained on current polls and Tw
 
 
 '''
-## Delphi model forecast vs. current poll
+## Forecast
 '''
 col1, col2,  = st.columns((1,1))
 
@@ -153,10 +160,10 @@ fig1 = plt.figure(figsize=(8,6),dpi=100)
 wedges, labels=plt.pie(val, wedgeprops=dict(width=0.4,edgecolor='w'), labels=label, colors=colors)
 wedges[-1].set_visible(False)
 
-col1.subheader("Delphi model forecast")
+col1.subheader("Our forecast")
 col1.pyplot(fig1)
-col2.subheader("#Current poll as of XX.XX.XXXX")
-col2.markdown("Some random text about our forecast")
+col2.subheader("Delphi vs. current poll as of XX.XX.XXXX")
+col2.markdown("Grouped Barchart comparing our models forecast with the current poll")
 
 
 # Ideas for dashboard
@@ -165,9 +172,23 @@ col2.markdown("Some random text about our forecast")
 ## Show engineered twitter feature per party per day
 ## Show most liked/ retweeted positive and negative tweet per party
 
+st.markdown("## Timeline: Delphi vs. poll forecast")
+st.markdown("Line graph comparing prediciton from Delphi with poll per party over time (e.g. last week)")
+
 '''
-## Most popular tweets
+## Twitter Insights
 '''
+
+st.subheader("Twitter Key Metrics")
+col7, col8, col9, col10 = st.columns((1,1,1,1))
+share_of_tweets =twitter_kpis[0].get("share_of_tweets")
+col7.metric("Share of Tweets",f"{round(share_of_tweets,2)}%")
+share_unique_users=twitter_kpis[0].get("share_unique_users")
+col8.metric("Share of unique Users",f"{round(share_unique_users,2)}%")
+share_of_positive_tweets=twitter_kpis[0].get("share_of_positive_tweets")
+col9.metric("Share of positive Tweets",f"{round(share_of_positive_tweets,2)}%")
+share_of_negative_tweets=twitter_kpis[0].get("share_of_negative_tweets")
+col10.metric("Share of negative Tweets", f"{round(share_of_negative_tweets,2)}%")
 
 with st.expander('Most Likes'):
     col3, col4,  = st.columns((1,1))
