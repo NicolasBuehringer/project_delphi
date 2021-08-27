@@ -22,6 +22,6 @@ app.add_middleware(
 
 @app.get("/")
 def index():
-    return dict(greeting="CDU will win")
+    return dict(greeting="CDU will lose")
 
 
