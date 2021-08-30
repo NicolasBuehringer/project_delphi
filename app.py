@@ -29,17 +29,18 @@ SPD_forecast = float(response.get("SPD", 0.0))
 OTHER_forecast = float(response.get("OTHER", 0.0))
 
 
-# Current poll from DAWUM API OR Delphi API
-# Dummy values (to be updated)
-AFD_poll = 10.61
-CDU_poll = 21.97
-FDP_poll = 10.33
-GRUENE_poll = 19.69
-LINKE_poll = 7.11
-SPD_poll = 19.59
-OTHER_poll = 10.7
+# Current poll from DAWUM API
+current_poll = pd.read_csv("raw_data/latest_poll.csv")
+AFD_poll = current_poll.loc[0,"AfD"]
+CDU_poll = current_poll.loc[0, "CDU/CSU"]
+FDP_poll = current_poll.loc[0, "FDP"]
+GRUENE_poll = current_poll.loc[0,"Grüne"]
+LINKE_poll = current_poll.loc[0,"Linke"]
+SPD_poll = current_poll.loc[0,"SPD"]
+OTHER_poll = current_poll.loc[0,"other"]
 
 # Engineered Twitter Feautres (KPIs) via Delphi API
+#tes = pd.read_csv("raw_data/tweet_kpis.csv")
 
 # Dummy values for Twitter KPIS
 twitter_kpis = [
