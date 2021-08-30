@@ -4,7 +4,7 @@ COPY api /api
 COPY project_delphi /project_delphi
 COPY model.joblib /model.joblib
 COPY requirements.txt /requirements.txt
-COPY /home/lucab/code/Lucaqberra/gcp/project-delphi-323909-c243cef634c6.json /credentials.json
+#COPY /home/lucab/code/Lucaqberra/gcp/project-delphi-323909-c243cef634c6.json /credentials.json
 
 RUN pip install -r requirements.txt
 

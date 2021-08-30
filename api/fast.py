@@ -22,6 +22,6 @@ app.add_middleware(
 
 @app.get("/")
 def index():
-    return dict(greeting="CDU will lose")
+    return {"AFD" :11.61, "CDU":21.47,  "FDP":10.83,  "GRUENE":19.19, "LINKE":7.61, "SPD": 15.36, "OTHER" : 10.76 }
 
 
