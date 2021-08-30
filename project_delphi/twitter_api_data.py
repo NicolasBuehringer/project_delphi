@@ -1,12 +1,9 @@
-import os
 import requests
-import pandas as pd
 import time
 import datetime
-from os.path import join, dirname
-from python-dotenv import load_dotenv
+import pandas as pd
 from project_delphi.twitter_api_params import query_dict, headers
-
+from project_delphi.params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
 
 
 def create_url(keywords, start_date, end_date, max_results = 10):
@@ -150,12 +147,18 @@ if __name__ == "__main__":
     # get current time
     current_time = datetime.datetime.today()
 
-    # get timedelta for six weeks ~ 42 days
-    days = datetime.timedelta(42)
+    # get current time yesterday
+    current_time_yesterday = (current_time - datetime.timedelta(1))
 
-    # format time to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
-    start_time = (current_time - days).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    end_time = current_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    # convert to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
+    current_time = current_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    current_time_yesterday = current_time_yesterday.strftime(
+        '%Y-%m-%dT%H:%M:%S.%fZ')
+
+    # "2021-08-30T10:37:59.638463Z"
+    # "2021-08-27T00:00:00.001Z"
+    start_time = f"{current_time_yesterday[:11]}02:00:00.001Z"
+    end_time = f"{current_time[:11]}02:00:00.001Z"
 
     # set max results per api call
     max_results = 500

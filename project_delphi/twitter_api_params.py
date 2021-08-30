@@ -1,5 +1,5 @@
-from python-dotenv import load_dotenv
 import os
+from python-dotenv import load_dotenv
 from os.path import join, dirname
 
 dotenv_path = join(dirname(__file__), '.env')
@@ -56,7 +56,7 @@ lang:de -is:retweet
 -#diePARTEI -@DiePARTEI
 -@Tierschutzparte -NPD -@Piratenpartei -#Piraten -#dieBasis -@diebasispartei -#Volt -@VoltDeutschland"""
 
-query_others = """(#FreieWaehler OR @FREIEWAEHLER_BV OR #diePARTEI OR @DiePARTEI OR @Tierschutzparte OR NPD OR @Piratenpartei OR #Piraten OR #dieBasis OR @diebasispartei OR #Volt OR @VoltDeutschland OR @oedp_de OR @bgepartei  OR @TodenhoeferTeam OR #TeamTodenhoefer)
+query_others = """(#FreieWaehler OR #FreieWähler OR #FREIEWÄHLER OR @FREIEWAEHLER_BV OR #diePARTEI OR @DiePARTEI OR @Tierschutzparte OR NPD OR @Piratenpartei OR #Piraten OR #dieBasis OR @diebasispartei OR #Volt OR @VoltDeutschland OR @oedp_de OR @bgepartei OR @TodenhoeferTeam OR #TeamTodenhoefer)
 lang:de -is:retweet
 -@cducsubt -@CDU -@ArminLaschet -#Laschet -#ArminLaschet -#laschet -#cdu -#CDU -CDU/CSU -Laschet
 -@Die_Gruenen -@ABaerbock -@GrueneBundestag -#Gruene -#Grünen -#Grüne -#GRUENEN -#AnnalenaBaerbock -#Baerbock -#baerbock -Baerbock -Grüne -Gruene
