@@ -1,12 +1,9 @@
-import os
 import requests
-import pandas as pd
 import time
 import datetime
-from os.path import join, dirname
-from python-dotenv import load_dotenv
-from project_delphi.twitter_api_params import query_dict, headers
-
+import pandas as pd
+from project_delphi.twitter_api_params import query_dict, get_credentials
+from project_delphi.params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
 
 
 def create_url(keywords, start_date, end_date, max_results = 10):
@@ -46,7 +43,12 @@ def connect_to_endpoint(url, headers, params, next_token):
     return response.json()
 
 
-def call_api(headers, keywords, start_time, end_time, max_results, new_token=None):
+def call_api(headers,
+             keywords,
+             start_time,
+             end_time,
+             max_results,
+             new_token=None):
     """Calls the twitter api and returns a dataframe containig all fetched information"""
 
     # create url by calling above defined function; url is a tuple
@@ -96,6 +98,7 @@ def get_data(party, keywords, start_time,
 
     # create a main DataFrame to which all the api call results for one party are concatenated
     one_party_df = pd.DataFrame()
+    headers = get_credentials()
 
     # set collected tweet counter to zero
     collected_tweets = 0
@@ -103,11 +106,11 @@ def get_data(party, keywords, start_time,
     # call the api the first time resulting in a returned DataFrame, the next token and number of collected tweets
     single_api_call_df, next_token, collected_tweets = call_api(headers, keywords,
                                    start_time, end_time,
-                                   max_results, tweet_amount,
+                                   max_results,
                                    new_token=None)
 
     # concat the DataFrames to save function call result
-    pd.concat([one_party_df, single_api_call_df], ignore_index=True)
+    one_party_df = pd.concat([one_party_df, single_api_call_df], ignore_index=True)
 
     # add number of fetched tweets to counter
     collected_tweets += collected_tweets
@@ -122,11 +125,11 @@ def get_data(party, keywords, start_time,
         # call api with new next_token
         single_api_call_df, next_token, collected_tweets = call_api(headers, keywords,
                                        start_time, end_time,
-                                       max_results, tweet_amount,
+                                       max_results,
                                        new_token=next_token)
-
+        print(collected_tweets)
         # save result and add number of tweets
-        pd.concat([one_party_df, single_api_call_df], ignore_index=True)
+        one_party_df = pd.concat([one_party_df, single_api_call_df], ignore_index=True)
         collected_tweets += collected_tweets
 
 
@@ -136,7 +139,7 @@ def get_data(party, keywords, start_time,
             break
 
     # after collecting all tweets create a new column containing the party's name
-    one_party_df["party"] = party.upper()
+    one_party_df["party"] = party
 
     # return a DataFrame with all tweets for one time period
     return one_party_df
@@ -150,12 +153,16 @@ if __name__ == "__main__":
     # get current time
     current_time = datetime.datetime.today()
 
-    # get timedelta for six weeks ~ 42 days
-    days = datetime.timedelta(42)
+    # get current time yesterday
+    current_time_one_day_ago = (current_time - datetime.timedelta(1))
+    current_time_two_days_ago = (current_time - datetime.timedelta(2))
 
-    # format time to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
-    start_time = (current_time - days).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-    end_time = current_time.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+    # convert to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
+
+    # "2021-08-30T10:37:59.638463Z"
+    # "2021-08-27T00:00:00.001Z"
+    start_time = f"{str(current_time_two_days_ago)[:10]}T22:00:01.000Z"
+    end_time = f"{str(current_time_one_day_ago)[:10]}T00:00:01.000Z"
 
     # set max results per api call
     max_results = 500
@@ -171,8 +178,9 @@ if __name__ == "__main__":
                              end_time, max_results, tweet_amount)
 
         # concat to master DataFrame
-        pd.concat([all_parties_df, one_party_df], ignore_index=True)
+        all_parties_df = pd.concat([all_parties_df, one_party_df], ignore_index=True)
 
         # save master DataFrame as a csv
-        all_parties_df.to_csv(f"tweet_database_{start_time[5:7]+start_time[8:10]}_{end_time[5:7]+end_time[8:10]}.csv",
-                    index=False)
+        all_parties_df.to_csv(
+            f"temp_tweet_database_{str(current_time)[5:7]}_{str(current_time)[8:10]}.csv"
+        )
