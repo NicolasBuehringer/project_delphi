@@ -54,6 +54,8 @@ def clean_data():
 
     df_final["Surveyed_Persons"] = df_final["Surveyed_Persons"].astype(int)
 
+    df_final = df_final.reset_index()
+
     return df_final
 
 if __name__ == '__main__':
