@@ -12,7 +12,7 @@ def get_parties(**kwargs):
 
     data = gepd.gepd()
     parties_dict = data.get_parties()
-    
+
     parties_dict_short = {}
     for key, value in parties_dict.items():
         parties_dict_short[key] = value["Shortcut"]
@@ -24,7 +24,7 @@ def clean_data():
     end_date = "2021-08-24"
     other_parties = ["Sonstige", "Freie Wähler", "BP","Die PARTEI", "SSW", "BVB/FW", "NPD", "Piraten",\
                     "BIW", "Tierschutzpartei"]
-    
+
     parties_dict_short = get_parties()
     df = get_data()
     df = df.rename(columns=parties_dict_short)
@@ -60,5 +60,3 @@ if __name__ == '__main__':
     print("working")
     df = clean_data()
     print(df)
-    
-
