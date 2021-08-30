@@ -5,7 +5,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import requests
-import seaborn as sns
+#import seaborn as sns
 from io import BytesIO
 #import plotly.express as px  #need to be included in requirements
 
