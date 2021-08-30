@@ -1,5 +1,5 @@
 import pandas as pd
-from polls_data_clean import get_data, clean_data, get_parties
+from polls_data_clean import clean_data
 
 
 def poll_for_streamlit():
