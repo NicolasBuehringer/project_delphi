@@ -224,12 +224,10 @@ fig.savefig(buf, format="png")
 col2.image(buf)
 
 
-st.markdown("""---""")
-
 st.markdown("## Timeline: Delphi vs. poll forecast")
 st.markdown("Line graph comparing prediciton from Delphi with poll per party over time (e.g. last week)")
 
-# Mock data for draf
+# Mock data for chart
 np.random.seed(2021)
 N = 10
 rng = pd.date_range(start='2021-08-16', end='2021-08-25')
