@@ -28,6 +28,7 @@ def clean_data():
     parties_dict_short = get_parties()
     df = get_data()
     df = df.rename(columns=parties_dict_short)
+    df = df.loc[df["Parliament_ID"] == "0"]
 
     df["Date"] =  pd.to_datetime(df["Date"], format= "Y-M-D")
     df_dated = df.loc[(df['Date'] > start_date) & (df['Date'] <= end_date)]
