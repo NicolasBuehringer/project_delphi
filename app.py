@@ -7,7 +7,7 @@ import streamlit as st
 import requests
 #import seaborn as sns
 from io import BytesIO
-#import plotly.express as px  #need to be included in requirements
+import plotly.express as px  #need to be included in requirements
 
 #Set page layout to wide
 st.set_page_config(layout="wide")
@@ -39,8 +39,8 @@ LINKE_poll = current_poll.loc[0,"Linke"]
 SPD_poll = current_poll.loc[0,"SPD"]
 OTHER_poll = current_poll.loc[0,"other"]
 
-# Engineered Twitter Feautres (KPIs) via Delphi API
-#tes = pd.read_csv("raw_data/tweet_kpis.csv")
+# Engineered Twitter Features (KPIs) via Delphi API
+tweet_kpis = pd.read_csv("raw_data/tweet_kpis.csv")
 
 # Dummy values for Twitter KPIS
 twitter_kpis = [
@@ -275,9 +275,14 @@ col11.image(buf)
 #Share of unique_users
 col12.markdown("**% unique users**")
 col12.markdown("")
+fig22 = plt.figure(figsize=(3, 2.5), dpi=100)
+ax22 = plt.bar(x=tweet_kpis["party"], height=tweet_kpis["share_of_tweets"])
+plt.xticks(rotation='vertical')
 #share_unique_users=twitter_kpis[0].get("share_unique_users")
-chart_data = pd.DataFrame(np.array(val), index=label)
-col12.bar_chart(chart_data, height=250)
+#chart_data = pd.DataFrame(tweet_kpis, index=label)
+#px.bar(tweet_kpis, x='party', y='share_of_tweets')
+fig22.savefig(buf, format="png", bbox_inches='tight')
+col12.image(buf)
 
 #Share of positive Tweets
 col13.markdown("**% positive Tweets**")
