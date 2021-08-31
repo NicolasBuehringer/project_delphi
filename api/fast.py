@@ -1,3 +1,4 @@
+from project_delphi.scheduler import run_app
 
 # $DELETE_BEGIN
 from datetime import datetime
@@ -25,3 +26,7 @@ def index():
     return {"AFD" :11.61, "CDU":21.47,  "FDP":10.83,  "GRUENE":19.19, "LINKE":7.61, "SPD": 15.36, "OTHER" : 10.76 }
 
 
+@app.post("/run_app")
+def execute_function():
+
+    run_app()
