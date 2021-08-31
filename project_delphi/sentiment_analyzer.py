@@ -1,10 +1,13 @@
 import datetime
 import pandas as pd
 from germansentiment import SentimentModel
+from google.cloud import storage
 
-def get_sentiment(data):
-# import new daily dataframe google cloud -- how??
 
+def get_sentiment(raw_tweets):
+    """
+    Analyzes the sentiment of tweets in a dataframe given that the tweet column is named text.
+    """
 
     model = SentimentModel()
 
@@ -12,14 +15,14 @@ def get_sentiment(data):
     full_sentiment = []
 
     # set amount of analyzed tweets per iteration and maximum index
-    x = 1000
-    max_len = len(data) - 1
+    x = 500
+    max_len = len(raw_tweets) - 1
 
     # iterate over a range of 0, len_dataframe with step size 987
     for i in range(0,max_len, x):
 
         # slice dataframe for the current 987 rows
-        temp = data.iloc[i: (i + x)]
+        temp = raw_tweets.iloc[i: (i + x)]
 
         # turn tweets into a list for sentiment analysis
         temp_tweets = list(temp.text)
@@ -34,10 +37,14 @@ def get_sentiment(data):
         # append to before defined empty list
         full_sentiment.append(temp_result)
 
+    # turn list of lists from each iteration into one list --> flatten
     full_sentiment = sum(full_sentiment, [])
-    data["sentiment"] = full_sentiment
 
-    return data
+    # save sentiment as new column in raw_database
+    raw_tweets["sentiment"] = full_sentiment
+
+    # this isnt really raw_tweets anymore but dont want to redefine
+    return raw_tweets
 
 
 if __name__ == "__main__":
