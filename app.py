@@ -57,8 +57,8 @@ def download_blob():
     # any content from Google Cloud Storage. As we don't need additional data,
     # using `Bucket.blob` is preferred here.
     blob = bucket.blob(source_blob_name)
-    blob.download_to_filename("raw_data/test.csv")
-    return pd.read_csv("raw_data/test.csv")
+    blob.download_to_filename("test.csv")
+    return pd.read_csv("test.csv")
     print("Downloaded storage object {} from bucket {} to local file {}.".format(
             source_blob_name, bucket_name, destination_file_name))
 
