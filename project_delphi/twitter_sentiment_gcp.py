@@ -5,7 +5,7 @@ import pandas as pd
 from germansentiment import SentimentModel
 import numpy as np
 
-STORAGE_LOCATION = 'nlp_model_test/model.joblib'
+STORAGE_LOCATION = 'nlp_model_test/sentiment.joblib'
 
 def get_data():
 
@@ -24,11 +24,14 @@ class NLPModelTrainer():
         self.df = df
         self.pipeline = None
 
-
-
     def predict_nlp_sentiment():
 
-        sentiments = model.predict_sentiment(data_full.text)
+
+        model = SentimentModel()
+        self.pipeline = model
+        #sentiments = model.predict_sentiment(data_full.text)
+
+        return sentiments
 
     def upload_model_to_gcp(self):
 
@@ -39,7 +42,7 @@ class NLPModelTrainer():
 
         blob = bucket.blob(STORAGE_LOCATION)
 
-        blob.upload_from_filename('model.joblib')
+        blob.upload_from_filename('sentiment.joblib')
 
 
     def save_model(self):
@@ -56,9 +59,10 @@ class NLPModelTrainer():
         print(f"uploaded model.joblib to gcp cloud storage under \n => {STORAGE_LOCATION}")
 
 
-
-
 if __name__ == "__main__":
 
     df = get_data()
+    trainer = NLPModelTrainer()
+    trainer.save_model()
     print(df)
+    
