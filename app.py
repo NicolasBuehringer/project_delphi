@@ -2,12 +2,13 @@
 from google.cloud import storage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
+from io import BytesIO
+
 import pandas as pd
 import numpy as np
 import streamlit as st
 import requests
 import os
-from io import BytesIO
 
 #Set page layout to wide
 st.set_page_config(layout="wide")
@@ -36,37 +37,30 @@ else:
     print("credentials file already exists 🎉")
 
 
-# def download_blob():
-#     """Downloads a blob from the bucket."""
-#     # The ID of your GCS bucket
-#     bucket_name = "project_delphi_bucket"
+@st.cache
+def download_blob():
+    """Downloads a blob from the bucket."""
+    # The ID of your GCS bucket
+    bucket_name = "project_delphi_bucket"
 
-#     # The ID of your GCS object
-#     source_blob_name = "streamlit/polls.csv"
+    # The ID of your GCS object
+    source_blob_name = "streamlit/delphi_project_logo_dark.png"
 
-#     # The path to which the file should be downloaded
-#     destination_file_name = "raw_data"
+    # The path to which the file should be downloaded
+    destination_file_name = "delphi_project_logo_dark.png"
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
 
-#     storage_client = storage.Client()
+    # Construct a client side representation of a blob.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
+    return mpimg.imread("delphi_project_logo_dark.png")
 
-#     bucket = storage_client.bucket(bucket_name)
 
-#     # Construct a client side representation of a blob.
-#     # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
-#     # any content from Google Cloud Storage. As we don't need additional data,
-#     # using `Bucket.blob` is preferred here.
-#     blob = bucket.blob(source_blob_name)
-#     blob.download_to_filename("test.csv")
-#     return pd.read_csv("test.csv")
-#     print("Downloaded storage object {} from bucket {} to local file {}.".format(
-#             source_blob_name, bucket_name, destination_file_name))
-
-# file = download_blob()
-# st.dataframe(file)
 
 
 @st.cache(allow_output_mutation=True)
-def get_data_from_gcp(path, local=False, index_column=None):
+def get_data_from_gcp(path, index_column=None):
     """method to get the training data (or a portion of it) from google cloud bucket"""
     # Add Client() here
     client = storage.Client()
@@ -75,20 +69,21 @@ def get_data_from_gcp(path, local=False, index_column=None):
     df = pd.read_csv(path, index_col=index_column)
     return df
 
+
 # Links for all datasets needed to be displayed on Heroku
 link_current_poll = "gs://project_delphi_bucket/streamlit/latest_poll.csv"
 link_historic_polls = "gs://project_delphi_bucket/streamlit/polls.csv"
 link_tweet_kpis = "gs://project_delphi_bucket/streamlit/tweet_kpis.csv"
 link_most_liked_tweets = "gs://project_delphi_bucket/streamlit/most_liked_tweets.csv"
 link_most_retweeted_tweets = "gs://project_delphi_bucket/streamlit/most_retweeted_tweets.csv"
-
-
-#test = get_data_from_gcp()
-#st.dataframe(test)
+link_logo = "gs://project_delphi_bucket/streamlit/delphi_project_logo_dark.png"
 
 # ---------------------------------------------------------
 # API calls and assignment of variables
 # ---------------------------------------------------------
+
+# Project Delphi Logo
+logo_img = download_blob()
 
 # Forecast from Delphi API
 url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
@@ -114,6 +109,7 @@ OTHER_poll = current_poll.loc[0,"other"]
 
 # Poll data and prediction over time
 historic_polls = get_data_from_gcp(link_historic_polls, index_column="Date")
+historic_polls = historic_polls.tail(30)
 
 # Engineered Twitter Features (KPIs) via Delphi API
 tweet_kpis = get_data_from_gcp(link_tweet_kpis)
@@ -132,9 +128,10 @@ most_retweeted_tweets = get_data_from_gcp(link_most_retweeted_tweets)
 # Streamlit layout
 # ---------------------------------------------------------
 
-'''
-# German Federal Election forecast
-'''
+# Insert Logo Image on top left corner of the website
+col0, col01 = st.columns((5,1))
+col0.title("German Federal Election forecast")
+col01.image(logo_img)
 
 '''
 Our goal is to create the most accurate forecast for the upcoming German federal elections on 26th September 2021
@@ -221,10 +218,10 @@ col2.image(buf)
 
 #-------------------------------------------------------------
 # 3rd Graph: Timeline: Delphi vs. poll forecast
-st.markdown("## Timeline: Delphi vs. poll forecast")
-st.markdown("Line graph comparing prediciton from Delphi with poll per party over time (e.g. last week)")
+st.markdown("## Latest polling data")
+st.markdown("")
 
-# Mock data for chart
+# Create Line chart to display historic poll data
 st.line_chart(historic_polls)
 
 st.markdown("""---""")
