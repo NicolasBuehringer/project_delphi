@@ -1,9 +1,11 @@
 import requests
 import time
 import datetime
+import os
 import pandas as pd
+from google.cloud import storage
 from project_delphi.twitter_api_params import query_dict, get_credentials
-from project_delphi.params import BUCKET_NAME, BUCKET_TRAIN_DATA_PATH
+from project_delphi.params import BUCKET_NAME
 
 
 def create_url(keywords, start_date, end_date, max_results = 10):
@@ -145,24 +147,48 @@ def get_data(party, keywords, start_time,
     return one_party_df
 
 
-if __name__ == "__main__":
 
+"""def run_app():
+    temp_data = get_tweets
+
+    full_data = sentiment(temp_data)
+
+    cleaned_data = cleaner(full_data)"""
+
+
+def upload_tweets_to_gcp(date):
+
+    os.environ[
+        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+
+    client = storage.Client()
+
+    STORAGE_LOCATION = f"twitter_data/temp_tweets/temp_tweet_database_{date[5:7]}_{date[8:10]}.csv"
+
+    bucket = client.bucket(BUCKET_NAME)
+
+    blob = bucket.blob(STORAGE_LOCATION)
+
+    blob.upload_from_filename(
+        f"temp_tweet_database_{date[5:7]}_{date[8:10]}.csv"
+    )
+
+
+if __name__ == "__main__":
+    """
     # create a master DataFrame for all parties
     all_parties_df = pd.DataFrame()
 
-    # get current time
+    # get current time"""
     current_time = datetime.datetime.today()
-
+    """
     # get current time yesterday
-    current_time_one_day_ago = (current_time - datetime.timedelta(1))
-    current_time_two_days_ago = (current_time - datetime.timedelta(2))
+    current_time_yesterday = (current_time - datetime.timedelta(1))
 
     # convert to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
-
-    # "2021-08-30T10:37:59.638463Z"
-    # "2021-08-27T00:00:00.001Z"
-    start_time = f"{str(current_time_two_days_ago)[:10]}T22:00:01.000Z"
-    end_time = f"{str(current_time_one_day_ago)[:10]}T00:00:01.000Z"
+    # this is UTC; we are not accounting for german time zone +02:00
+    start_time = f"{str(current_time_yesterday)[:10]}T00:00:01.000Z"
+    end_time = f"{str(current_time)[:10]}T00:00:01.000Z"
 
     # set max results per api call
     max_results = 500
@@ -184,3 +210,5 @@ if __name__ == "__main__":
         all_parties_df.to_csv(
             f"temp_tweet_database_{str(current_time)[5:7]}_{str(current_time)[8:10]}.csv"
         )
+    """
+    upload_tweets_to_gcp(str(current_time))
