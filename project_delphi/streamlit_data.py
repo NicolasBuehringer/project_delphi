@@ -1,7 +1,7 @@
-from polls_data_clean import clean_data
+from project_delphi.polls_data_clean import clean_data
 from google.cloud import storage
-from params import BUCKET_NAME
-from utils import get_date_n_days_ago
+from project_delphi.params import BUCKET_NAME
+from project_delphi.utils import get_date_n_days_ago
 
 import pandas as pd
 import os
@@ -131,7 +131,8 @@ def get_streamlit_data(feature_database, daily_database, days_ago=1):
     2. Tweet KPIs history
     3. Most liked/ most retweeted positive and negative tweets
     '''
-
+    os.environ[
+        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     # Save Poll data as .csv and upload to GCP
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)

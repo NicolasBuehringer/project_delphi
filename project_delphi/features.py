@@ -3,7 +3,7 @@ from os import link
 import pandas as pd
 import numpy as np
 import datetime
-from polls_data_clean import clean_data
+from project_delphi.polls_data_clean import clean_data
 
 
 
@@ -45,9 +45,11 @@ def load_and_clean_csv(df):
     # Change dtype
     df["tweet_date"] = df["tweet_date"].astype(str)
     df = df[df.tweet_date.str.match('(\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2})')]
-    df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
+    #df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
     df['tweet_date'] = df['tweet_date'].str.slice(0,19)
     df["tweet_date"] = pd.to_datetime(df["tweet_date"])
+    import ipdb
+    ipdb.set_trace()
     df['profile_creation_date'] = df['profile_creation_date'].str.slice(0,19)
     df["profile_creation_date"] = pd.to_datetime(df["profile_creation_date"])
     # Drop duplicates
@@ -59,7 +61,7 @@ def load_and_clean_csv(df):
     return df
 
 
-#def concat_dfs(cleaned_df):
+    #def concat_dfs(cleaned_df):
     '''
     Function concatenates multiple dataframes into one DF
     '''
@@ -113,7 +115,7 @@ def create_non_sentiment_features(df):
     df_temp_3["share_unique_users"] = df_temp_3["author_id"] / df_temp_3["text"]
     df_temp_3 = df_temp_3["share_unique_users"]
 
-     # Join the different temporary DFs into a final DataFrame
+    # Join the different temporary DFs into a final DataFrame
     df_final = df_temp.join(df_temp_2).join(df_temp_3)
     df_final = df_final.rename(columns={'text': "share_of_tweets"})
 
