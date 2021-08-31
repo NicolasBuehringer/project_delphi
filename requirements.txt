@@ -35,3 +35,4 @@ joblib
 streamlit
 requests
 matplotlib
+python-dotenv
