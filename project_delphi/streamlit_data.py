@@ -1,6 +1,7 @@
 from polls_data_clean import clean_data
 from google.cloud import storage
 from params import BUCKET_NAME
+from utils import get_date_n_days_ago
 
 import pandas as pd
 import os
@@ -122,9 +123,52 @@ def upload_streamlit_data_to_gcp(df, filename, index=False):
     print("Upload completed")
 
 
+def get_streamlit_data(feature_database, daily_database, days_ago=1):
+    '''
+    Takes in engineered features df and daily tweets + sentiment df
+    and creates tables to be displayed on streamlit and uploads them to GCP
+    1. Poll history and most recent poll
+    2. Tweet KPIs history
+    3. Most liked/ most retweeted positive and negative tweets
+    '''
+
+    # Save Poll data as .csv and upload to GCP
+    polls, latest_poll = poll_for_streamlit()
+    upload_streamlit_data_to_gcp(polls, "polls", index=True)
+    upload_streamlit_data_to_gcp(latest_poll, "latest_poll", index=True)
+
+    # Save Tweet Kpis as .csv and upload to GCP
+    #test_kpi = pd.read_csv("raw_data/data_final_20210826_v1.csv")
+    tweet_kpis = tweet_kpis_for_streamlit(feature_database)
+    upload_streamlit_data_to_gcp(tweet_kpis, "tweet_kpis", index=False)
+
+    # Save most liked/ most retweeted positive and negative tweets and upload to GCP
+    #test = pd.read_csv("raw_data/df_all_v2.csv")
+    tweet_date = get_date_n_days_ago(days_ago)
+    tweet_date = tweet_date.replace("_", "-")
+
+    #tweet_date = "2021-08-26"
+    most_liked_tweets, most_retweeted_tweets = most_popular_tweets(
+        daily_database, tweet_date)
+    upload_streamlit_data_to_gcp(most_liked_tweets,
+                                 "most_liked_tweets",
+                                 index=False)
+    upload_streamlit_data_to_gcp(most_retweeted_tweets,
+                                 "most_retweeted_tweets",
+                                 index=False)
+
+
+
+
+
 
 if __name__ == "__main__":
 
+    feature_database = pd.read_csv("raw_data/data_final_20210826_v1.csv")
+    daily_database = pd.read_csv("raw_data/df_all_v2.csv")
+    get_streamlit_data(feature_database, daily_database, days_ago=5)
+
+    '''
     # Save Poll data as .csv for streamlit
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)
@@ -145,3 +189,4 @@ if __name__ == "__main__":
     upload_streamlit_data_to_gcp(most_retweeted_tweets,
                                  "most_retweeted_tweets",
                                  index=False)
+                                 '''
