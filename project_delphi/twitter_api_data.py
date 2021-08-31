@@ -58,6 +58,8 @@ def call_api(headers,
     """
     Calls the twitter api and returns a dataframe containig all fetched information
     """
+    # sleep 4 seconds to not exceed api call limit per 15 Minutes (300)
+    time.sleep(4)
 
     # create url by calling above defined function; url is a tuple
     url = create_url(keywords, start_time, end_time, max_results)
@@ -129,8 +131,6 @@ def search_twitter(party, keywords, start_time,
     # call the api again with the next_token as additional parameter until the value becomes false
     while next_token:
 
-        # sleep 4 seconds to not exceed api call limit per 15 Minutes (300)
-        time.sleep(4)
 
         # call api with new next_token
         single_api_call_df, next_token, collected_tweets = call_api(headers, keywords,
@@ -166,7 +166,7 @@ def get_data(start_time = False, end_time=False):
     # set max results per api call
     max_results = 500
 
-    if not start_time and end_time:
+    if not (start_time and end_time):
         # convert to ISO 8601: YYYY-MM-DDTHH:mm:sssZ
         # this is UTC; we are not accounting for german time zone +02:00
         start_time = f"{get_date_n_days_ago(1).replace('_', '-')}T00:00:01.000Z"
