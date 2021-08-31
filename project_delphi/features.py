@@ -8,8 +8,8 @@ from polls_data_clean import clean_data
 
 cdu_path = '/Users/finnzurmuehlen/Downloads/2021_cdu_with_sentiment.csv'
 spd_path = '/Users/finnzurmuehlen/Downloads/2021_spd_with_sentiment.csv'
-gruene_path = '/Users/finnzurmuehlen/Downloads/2021_fdp_with_sentiment.csv'
-fdp_path = '/Users/finnzurmuehlen/Downloads/2021_gruene_with_sentiment.csv'
+gruene_path = '/Users/finnzurmuehlen/Downloads/2021_gruene_with_sentiment.csv'
+fdp_path = '/Users/finnzurmuehlen/Downloads/2021_fdp_with_sentiment.csv'
 linke_path = '/Users/finnzurmuehlen/Downloads/2021_0723-0826_Tweets_Linken_sentiment.csv'
 afd_path = '/Users/finnzurmuehlen/Downloads/2021_afd_with_sentiment.csv'
 other_path = '/Users/finnzurmuehlen/Downloads/2021_others_with_sentiment.csv'
