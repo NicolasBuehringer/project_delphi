@@ -7,7 +7,7 @@ import streamlit as st
 import requests
 #import seaborn as sns
 from io import BytesIO
-import plotly.express as px  #need to be included in requirements
+#import plotly.express as px  #need to be included in requirements
 
 #Set page layout to wide
 st.set_page_config(layout="wide")
