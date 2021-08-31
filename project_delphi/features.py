@@ -213,7 +213,7 @@ def create_rnn_final_df(df_poll ,df_joined):
     df_final = df_final.rename(columns = {0: "poll"})
 
     print("Success")
-    #df_final.to_csv('/Users/finnzurmuehlen/Downloads/df_final_py_test.csv')
+    df_final.to_csv('/Users/finnzurmuehlen/Downloads/df_final_py_test_2.csv')
     return df_final
 
 
@@ -244,3 +244,4 @@ if __name__ == '__main__':
 
     #
     df_final = create_rnn_final_df(df_poll, df_joined)
+    print(df_final)
