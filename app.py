@@ -1,4 +1,5 @@
 #Imports
+from google.cloud import storage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
 import pandas as pd
@@ -6,16 +7,14 @@ import numpy as np
 import streamlit as st
 import requests
 import os
-#import seaborn as sns
 from io import BytesIO
-#import plotly.express as px  #need to be included in requirements
 
 #Set page layout to wide
 st.set_page_config(layout="wide")
 
+#---------------------------------------------
 #GCP
-
-from google.cloud import storage
+#---------------------------------------------
 
 # create credentials file
 google_credentials_file = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
@@ -37,34 +36,55 @@ else:
     print("credentials file already exists 🎉")
 
 
-def download_blob():
-    """Downloads a blob from the bucket."""
-    # The ID of your GCS bucket
-    bucket_name = "project_delphi_bucket"
+# def download_blob():
+#     """Downloads a blob from the bucket."""
+#     # The ID of your GCS bucket
+#     bucket_name = "project_delphi_bucket"
 
-    # The ID of your GCS object
-    source_blob_name = "streamlit/polls.csv"
+#     # The ID of your GCS object
+#     source_blob_name = "streamlit/polls.csv"
 
-    # The path to which the file should be downloaded
-    destination_file_name = "raw_data"
+#     # The path to which the file should be downloaded
+#     destination_file_name = "raw_data"
 
-    storage_client = storage.Client()
+#     storage_client = storage.Client()
 
-    bucket = storage_client.bucket(bucket_name)
+#     bucket = storage_client.bucket(bucket_name)
 
-    # Construct a client side representation of a blob.
-    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
-    # any content from Google Cloud Storage. As we don't need additional data,
-    # using `Bucket.blob` is preferred here.
-    blob = bucket.blob(source_blob_name)
-    blob.download_to_filename("test.csv")
-    return pd.read_csv("test.csv")
-    print("Downloaded storage object {} from bucket {} to local file {}.".format(
-            source_blob_name, bucket_name, destination_file_name))
+#     # Construct a client side representation of a blob.
+#     # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
+#     # any content from Google Cloud Storage. As we don't need additional data,
+#     # using `Bucket.blob` is preferred here.
+#     blob = bucket.blob(source_blob_name)
+#     blob.download_to_filename("test.csv")
+#     return pd.read_csv("test.csv")
+#     print("Downloaded storage object {} from bucket {} to local file {}.".format(
+#             source_blob_name, bucket_name, destination_file_name))
 
-file = download_blob()
-st.dataframe(file)
+# file = download_blob()
+# st.dataframe(file)
 
+
+@st.cache(allow_output_mutation=True)
+def get_data_from_gcp(path, local=False):
+    """method to get the training data (or a portion of it) from google cloud bucket"""
+    # Add Client() here
+    client = storage.Client()
+    #if local:
+    #    path = "raw_data/most_liked_tweets.csv"
+    df = pd.read_csv(path)
+    return df
+
+# Links for all datasets needed to be displayed on Heroku
+link_current_poll = "gs://project_delphi_bucket/streamlit/latest_poll.csv"
+link_historic_polls = "gs://project_delphi_bucket/streamlit/polls.csv"
+link_tweet_kpis = "gs://project_delphi_bucket/streamlit/tweet_kpis.csv"
+link_most_liked_tweets = "gs://project_delphi_bucket/streamlit/most_liked_tweets.csv"
+link_most_retweeted_tweets = "gs://project_delphi_bucket/streamlit/most_retweeted_tweets.csv"
+
+
+#test = get_data_from_gcp()
+#st.dataframe(test)
 
 # ---------------------------------------------------------
 # API calls and assignment of variables
@@ -83,7 +103,7 @@ SPD_forecast = float(response.get("SPD", 0.0))
 OTHER_forecast = float(response.get("OTHER", 0.0))
 
 # Current poll from DAWUM API
-current_poll = pd.read_csv("raw_data/latest_poll.csv")
+current_poll = get_data_from_gcp(link_current_poll)
 AFD_poll = current_poll.loc[0,"AfD"]
 CDU_poll = current_poll.loc[0, "CDU/CSU"]
 FDP_poll = current_poll.loc[0, "FDP"]
@@ -93,10 +113,10 @@ SPD_poll = current_poll.loc[0,"SPD"]
 OTHER_poll = current_poll.loc[0,"other"]
 
 # Poll data and prediction over time
-historic_polls = pd.read_csv("raw_data/polls.csv")
+historic_polls = get_data_from_gcp(link_historic_polls)
 
 # Engineered Twitter Features (KPIs) via Delphi API
-tweet_kpis = pd.read_csv("raw_data/tweet_kpis.csv")
+tweet_kpis = get_data_from_gcp(link_tweet_kpis)
 tweet_kpis['order'] = pd.Categorical(
     tweet_kpis['party'],
     categories=['CDU', 'SPD', 'GRUENE', 'FDP', 'LINKE', 'AFD', 'OTHER'],
@@ -104,8 +124,8 @@ tweet_kpis['order'] = pd.Categorical(
 tweet_kpis = tweet_kpis.sort_values('order')
 
 # Most liked/ retweeted positive and negative tweet per party
-most_liked_tweets = pd.read_csv("raw_data/most_liked_tweets.csv")
-most_retweeted_tweets = pd.read_csv("raw_data/most_retweeted_tweets.csv")
+most_liked_tweets = get_data_from_gcp(link_most_liked_tweets)
+most_retweeted_tweets = get_data_from_gcp(link_most_retweeted_tweets)
 
 
 # ---------------------------------------------------------
