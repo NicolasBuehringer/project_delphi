@@ -12,6 +12,40 @@ import plotly.express as px  #need to be included in requirements
 #Set page layout to wide
 st.set_page_config(layout="wide")
 
+#GCP
+
+from google.cloud import storage
+
+
+def download_blob():
+    """Downloads a blob from the bucket."""
+    # The ID of your GCS bucket
+    bucket_name = "project_delphi_bucket"
+
+    # The ID of your GCS object
+    source_blob_name = "streamlit/polls.csv"
+
+    # The path to which the file should be downloaded
+    destination_file_name = "raw_data"
+
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+
+    # Construct a client side representation of a blob.
+    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
+    # any content from Google Cloud Storage. As we don't need additional data,
+    # using `Bucket.blob` is preferred here.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename("raw_data/test.csv")
+    return pd.read_csv("raw_data/test.csv")
+    print("Downloaded storage object {} from bucket {} to local file {}.".format(
+            source_blob_name, bucket_name, destination_file_name))
+
+file = download_blob()
+st.dataframe(file)
+
+
 # ---------------------------------------------------------
 # API calls and assignment of variables
 # ---------------------------------------------------------
@@ -39,7 +73,7 @@ SPD_poll = current_poll.loc[0,"SPD"]
 OTHER_poll = current_poll.loc[0,"other"]
 
 # Poll data and prediction over time
-# (still to be defined)
+historic_polls = pd.read_csv("raw_data/polls.csv")
 
 # Engineered Twitter Features (KPIs) via Delphi API
 tweet_kpis = pd.read_csv("raw_data/tweet_kpis.csv")
