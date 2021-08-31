@@ -1,7 +1,7 @@
 import os
 import datetime
 from google.cloud import storage
-from params import BUCKET_NAME
+from project_delphi.params import BUCKET_NAME
 
 
 def get_date_n_days_ago(ndelta=0):
