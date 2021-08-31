@@ -122,6 +122,12 @@ def upload_streamlit_data_to_gcp(df, filename, index=False):
     print("Upload completed")
 
 
+def get_streamlit_data(feature_database, daily_database):
+
+    pass
+
+
+
 
 if __name__ == "__main__":
 
