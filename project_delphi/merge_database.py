@@ -1,11 +1,11 @@
 import pandas as pd
 from google.cloud import storage
-from params import BUCKET_NAME
-from utils import get_date_n_days_ago
+from project_delphi.params import BUCKET_NAME
+from project_delphi.utils import get_date_n_days_ago
+import os
 
 # how get environment variable??
-#os.environ[
- #   "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+
 
 
 def merge_daily_to_master(daily_database):
@@ -14,6 +14,7 @@ def merge_daily_to_master(daily_database):
     and uploads the new master_database with new filename.
     Returns new_master_database for further usage
     """
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
 
     # get dates in format YYYY_MM_DD
     date_two_days_ago = get_date_n_days_ago(2)
@@ -21,22 +22,20 @@ def merge_daily_to_master(daily_database):
 
     # download old master_database
     old_master_database = pd.read_csv(
-        f"gs://{BUCKET_NAME}/tweets/tweet_database_{date_two_days_ago[:3]}_{date_two_days_ago[5:7]}_{date_two_days_ago[8:10]}.csv")
-    # dtype=DTYPE_DICT
+        f"gs://project_delphi_bucket/tweets/tweet_database_{date_two_days_ago[:10]}.csv"
+    )
 
     # concat daily database with old master
     new_master_database = pd.concat([old_master_database, daily_database])
 
     # save new database as csv
-    new_master_database.to_csv(
-        f"tweet_database_{date_yesterday[:3]}_{date_yesterday[5:7]}_{date_yesterday[8:10]}.csv"
-        )
+    new_master_database.to_csv(f"tweet_database_{date_yesterday[:10]}.csv")
 
     # upload new master_database
     client = storage.Client()
 
     # define storage location
-    STORAGE_LOCATION = f"twitter_data/temp_tweets/tweet_database_{date_yesterday[:3]}_{date_yesterday[5:7]}_{date_yesterday[8:10]}.csv"
+    STORAGE_LOCATION = f"tweets/tweet_database_{date_yesterday[:10]}.csv"
 
     bucket = client.bucket(BUCKET_NAME)
 
@@ -44,7 +43,7 @@ def merge_daily_to_master(daily_database):
 
     # upload saved csv
     blob.upload_from_filename(
-        f"tweet_database_{date_yesterday[:3]}_{date_yesterday[5:7]}_{date_yesterday[8:10]}.csv"
+        f"tweet_database_{date_yesterday[:10]}.csv"
     )
 
     # return new_master_database for next function in run_app

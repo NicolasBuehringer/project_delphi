@@ -1,7 +1,6 @@
 import os
 from dotenv import load_dotenv
 from os.path import join, dirname
-from google.cloud import storage
 
 
 def get_credentials():
@@ -91,11 +90,11 @@ lang:de -is:retweet
 
 # create a query dict to iterate over with the party name, its search string and the maximum number of tweets
 query_dict = {
-    "SPD": (query_spd, 1000000),
-    "AFD": (query_afd, 800000),
-    "CDU": (query_cdu, 1000000),
-    "FDP": (query_fdp, 800000),
-    "GRUENE": (query_gruene, 1000000),
-    "LINKE": (query_linke, 400000),
-    "OTHERS": (query_others, 400000)
+    "SPD": (query_spd, 50000),
+    "AFD": (query_afd, 30000),
+    "CDU": (query_cdu, 50000),
+    "FDP": (query_fdp, 30000),
+    "GRUENE": (query_gruene, 50000),
+    "LINKE": (query_linke, 20000),
+    "OTHERS": (query_others, 20000)
 }
