@@ -6,27 +6,14 @@ import datetime
 from polls_data_clean import clean_data
 
 
-cdu_path = '/Users/finnzurmuehlen/Downloads/2021_cdu_with_sentiment.csv'
-spd_path = '/Users/finnzurmuehlen/Downloads/2021_spd_with_sentiment.csv'
-gruene_path = '/Users/finnzurmuehlen/Downloads/2021_gruene_with_sentiment.csv'
-fdp_path = '/Users/finnzurmuehlen/Downloads/2021_fdp_with_sentiment.csv'
-linke_path = '/Users/finnzurmuehlen/Downloads/2021_0723-0826_Tweets_Linken_sentiment.csv'
-afd_path = '/Users/finnzurmuehlen/Downloads/2021_afd_with_sentiment.csv'
-other_path = '/Users/finnzurmuehlen/Downloads/2021_others_with_sentiment.csv'
 
 
-def load_and_clean_csv(parties, paths):
+def load_and_clean_csv(df):
     '''
-    Function loads CSV data from the Twitter API+Sentiment and returns a cleaned DF
+    Function loads DF data from the Twitter API+Sentiment and returns a cleaned DF
     '''
-    list_of_dfs = []
-    for party, path in zip(parties, paths):
-        # Load CSV Dataset via Path
-        df = pd.read_csv(path, lineterminator='\n', low_memory=False)
-
-        # Create "Party" Column and rename other columns
-        df['party'] = party
-        df = df.rename(columns={"tweet_created_at": "tweet_date",
+    # rename columns
+    df = df.rename(columns={"tweet_created_at": "tweet_date",
                                 "public_metrics.retweet_count": "retweet_count",
                                 "public_metrics.reply_count": "reply_count",
                                 "public_metrics.like_count": "like_count",
@@ -36,8 +23,8 @@ def load_and_clean_csv(parties, paths):
                                 "public_metrics.tweet_count": "user_tweet_count"
                                 })
 
-        # Including only columns that we want to use in the future
-        df = df[['party',
+    # Including only columns that we want to use in the future
+    df = df[['party',
                 'tweet_date',
                 'author_id',
                 'tweet_id',
@@ -54,33 +41,31 @@ def load_and_clean_csv(parties, paths):
                 'sentiment'
                 ]]
 
-        # Clean dataset columns:
-        # Change dtype
-        df["tweet_date"] = df["tweet_date"].astype(str)
-        df = df[df.tweet_date.str.match('(\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2})')]
-        df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
-        df['tweet_date'] = df['tweet_date'].str.slice(0,19)
-        df["tweet_date"] = pd.to_datetime(df["tweet_date"])
-        df['profile_creation_date'] = df['profile_creation_date'].str.slice(0,19)
-        df["profile_creation_date"] = pd.to_datetime(df["profile_creation_date"])
-        # Drop duplicates
-        df = df.drop_duplicates()
-        # Transform sentiment to numeric type
-        dict_to_numeric = {"negative": -2, "neutral": 1, "positive": 2}
-        df["sentiment"].replace(dict_to_numeric, inplace=True)
+    # Clean dataset columns:
+    # Change dtype
+    df["tweet_date"] = df["tweet_date"].astype(str)
+    df = df[df.tweet_date.str.match('(\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2})')]
+    df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
+    df['tweet_date'] = df['tweet_date'].str.slice(0,19)
+    df["tweet_date"] = pd.to_datetime(df["tweet_date"])
+    df['profile_creation_date'] = df['profile_creation_date'].str.slice(0,19)
+    df["profile_creation_date"] = pd.to_datetime(df["profile_creation_date"])
+    # Drop duplicates
+    df = df.drop_duplicates()
+    # Transform sentiment to numeric type
+    dict_to_numeric = {"negative": -2, "neutral": 1, "positive": 2}
+    df["sentiment"].replace(dict_to_numeric, inplace=True)
 
-        list_of_dfs.append(df)
-
-    return list_of_dfs
+    return df
 
 
-def concat_dfs(list_of_dfs):
+#def concat_dfs(cleaned_df):
     '''
     Function concatenates multiple dataframes into one DF
     '''
-    df_all = pd.concat(list_of_dfs)
-    df_all = df_all.reset_index(drop=True)
-    return df_all
+    #df_all = pd.concat(list_of_dfs)
+    #df_all = df_all.reset_index(drop=True)
+    #return df_all
 
 
 def create_non_sentiment_features(df):
@@ -213,35 +198,20 @@ def create_rnn_final_df(df_poll ,df_joined):
     df_final = df_final.rename(columns = {0: "poll"})
 
     print("Success")
-    df_final.to_csv('/Users/finnzurmuehlen/Downloads/df_final_py_test_2.csv')
+    #df_final.to_csv('/Users/finnzurmuehlen/Downloads/df_final_py_test_2.csv')
+    return df_final
+
+
+def get_features(df):
+    df_clean = load_and_clean_csv(df)
+    df_non_sentiment = create_non_sentiment_features(df_clean)
+    df_sentiment = create_sentiment_features(df_clean)
+    df_joined = join_features(df_non_sentiment, df_sentiment)
+    df_poll = load_poll_df()
+    df_final = create_rnn_final_df(df_poll, df_joined)
     return df_final
 
 
 
 if __name__ == '__main__':
-    # Input Data
-    parties = ["CDU", "SPD", "GRUENE", "FDP", "LINKE", "AFD", "OTHER"]
-    paths = [cdu_path, spd_path, gruene_path, fdp_path, linke_path, afd_path, other_path]
-    #poll_path = "/Users/finnzurmuehlen/Downloads/polls_data_2021_v4.csv"
-
-    #
-    list_of_dfs = load_and_clean_csv(parties, paths)
-
-    #
-    df_all = concat_dfs(list_of_dfs)
-
-    #
-    df_non_sentiment = create_non_sentiment_features(df_all)
-
-    #
-    df_sentiment = create_sentiment_features(df_all)
-
-    # Join DFs
-    df_joined = join_features(df_non_sentiment, df_sentiment)
-
-    #
-    df_poll = load_poll_df()
-
-    #
-    df_final = create_rnn_final_df(df_poll, df_joined)
-    print(df_final)
+    pass
