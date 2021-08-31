@@ -1,5 +1,9 @@
-import pandas as pd
 from polls_data_clean import clean_data
+from google.cloud import storage
+from params import BUCKET_NAME
+
+import pandas as pd
+import os
 
 
 def poll_for_streamlit():
@@ -108,22 +112,36 @@ def most_popular_tweets(df, tweet_date):
     return most_liked_tweets, most_retweeted_tweets
 
 
+def upload_streamlit_data_to_gcp(df, filename, index=False):
+    client = storage.Client()
+    STORAGE_LOCATION = f"streamlit/{filename}.csv"
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(STORAGE_LOCATION)
+    print(f"Start upload DataFrame to {STORAGE_LOCATION}")
+    blob.upload_from_string(df.to_csv(index=index), 'text/csv')
+    print("Upload completed")
+
+
 
 if __name__ == "__main__":
 
     # Save Poll data as .csv for streamlit
     polls, latest_poll = poll_for_streamlit()
-    polls.to_csv("raw_data/polls.csv")
-    latest_poll.to_csv("raw_data/latest_poll.csv")
+    upload_streamlit_data_to_gcp(polls, "polls", index=True)
+    upload_streamlit_data_to_gcp(latest_poll, "latest_poll", index=True)
 
     # Save Tweet Kpis as .csv for streamlit
     test_kpi = pd.read_csv("raw_data/data_final_20210826_v1.csv")
     tweet_kpis = tweet_kpis_for_streamlit(test_kpi)
-    tweet_kpis.to_csv("raw_data/tweet_kpis.csv", index=False)
+    upload_streamlit_data_to_gcp(tweet_kpis, "tweet_kpis", index=False)
 
     # Save most liked/ most retweeted positive and negative tweets
     test = pd.read_csv("raw_data/df_all_v2.csv")
     tweet_date = "2021-08-26"
     most_liked_tweets, most_retweeted_tweets = most_popular_tweets(test, tweet_date)
-    most_liked_tweets.to_csv("raw_data/most_liked_tweets.csv", index=False)
-    most_retweeted_tweets.to_csv("raw_data/most_retweeted_tweets.csv", index=False)
+    upload_streamlit_data_to_gcp(most_liked_tweets,
+                                 "most_liked_tweets",
+                                 index=False)
+    upload_streamlit_data_to_gcp(most_retweeted_tweets,
+                                 "most_retweeted_tweets",
+                                 index=False)
