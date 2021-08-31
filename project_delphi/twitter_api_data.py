@@ -154,7 +154,7 @@ def search_twitter(party, keywords, start_time,
     # return a DataFrame with all tweets for one time period
     return one_party_df
 
-def get_data(query_dict=query_dict):
+def get_data(start_time = False, end_time=False):
     """
     Returns a DataFrame containing all tweets for one day for 7 diffrent search keywords
     for each party defined in query_dict
@@ -166,10 +166,14 @@ def get_data(query_dict=query_dict):
     # set max results per api call
     max_results = 500
 
-    # convert to ISO 8601: YYYY-MM-DDTHH:mm:sssZ
-    # this is UTC; we are not accounting for german time zone +02:00
-    start_time = f"{get_date_n_days_ago(1).replace('_', '-')}T00:00:01.000Z"
-    end_time = f"{get_date_n_days_ago().replace('_', '-')}T00:00:01.000Z"
+    if not start_time and end_time:
+        # convert to ISO 8601: YYYY-MM-DDTHH:mm:sssZ
+        # this is UTC; we are not accounting for german time zone +02:00
+        start_time = f"{get_date_n_days_ago(1).replace('_', '-')}T00:00:01.000Z"
+        end_time = f"{get_date_n_days_ago().replace('_', '-')}T00:00:01.000Z"
+    else:
+        start_time = start_time
+        end_time = end_time
 
     # for key, value in query_dict from twitter_api_params.py
     for party, keywords in query_dict.items():

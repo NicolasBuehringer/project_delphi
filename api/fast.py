@@ -27,6 +27,6 @@ def index():
 
 
 @app.post("/run_app")
-def execute_function():
+def execute_function(start_time, end_time):
 
-    run_app()
+    run_app(start_time, end_time)
