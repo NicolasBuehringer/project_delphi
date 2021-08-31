@@ -1,3 +1,4 @@
+from project_delphi.features import get_features
 from project_delphi.merge_database import merge_daily_to_master
 from project_delphi.twitter_api_data import get_data
 from project_delphi.sentiment_analyzer import get_sentiment
@@ -13,13 +14,15 @@ def run_app(start_time, end_time):
     """
 
 
-    daily_raw_tweets = get_data(start_time, end_time)
+    #daily_raw_tweets = get_data(start_time, end_time)
 
-    daily_database = get_sentiment(daily_raw_tweets)
+    #daily_database = get_sentiment(daily_raw_tweets)
 
-    tweet_database = merge_daily_to_master(daily_database)
+    #tweet_database = merge_daily_to_master(daily_database)
 
-    #feauture_database = clean_data(tweet_database)
+    tweet_database = pd.read_csv("tweet_database_2021_08_30.csv")
+    features_database = get_features(tweet_database)
+    return features_database.iloc[-1, 8]
 
     # website_features = get_streamlit_data(tweet_database)
 

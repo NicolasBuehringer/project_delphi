@@ -3,7 +3,7 @@ from os import link
 import pandas as pd
 import numpy as np
 import datetime
-from polls_data_clean import clean_data
+from project_delphi.polls_data_clean import clean_data
 
 
 

@@ -28,6 +28,6 @@ def index():
 
 @app.post("/run_app/")
 def execute_function(start_time, end_time):
-    run_app(start_time, end_time)
-    return "Finished"
+    df = run_app(start_time, end_time)
+    return f"This worked {df}"
     #run_app(start_time, end_time)
