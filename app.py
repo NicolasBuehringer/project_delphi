@@ -37,7 +37,7 @@ else:
     print("credentials file already exists 🎉")
 
 
-@st.cache
+
 def download_blob():
     """Downloads a blob from the bucket."""
     # The ID of your GCS bucket
@@ -59,7 +59,7 @@ def download_blob():
 
 
 
-@st.cache(allow_output_mutation=True)
+
 def get_data_from_gcp(path, index_column=None):
     """method to get the training data (or a portion of it) from google cloud bucket"""
     # Add Client() here
@@ -175,7 +175,7 @@ col1.image(s1)
 
 #-------------------------------------------------------------
 # 2nd Chart: Delphi vs. current poll (grouped bar chart)
-poll_date = current_poll.loc[0,"Date"]
+poll_date = current_poll.loc[0, "Date"]
 col2.subheader(f"Delphi vs. current poll as of {poll_date}")
 
 # Label and colors for all following charts
