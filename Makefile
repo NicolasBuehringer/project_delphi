@@ -80,6 +80,7 @@ BUCKET_NAME= project_delphi_bucket
 
 # will store the packages uploaded to GCP for the training
 BUCKET_TRAINING_FOLDER = 'test'
+BUCKET_TRAINING_FOLDER_nlp = "nlp_model_test"
 
 ##### Model - - - - - - - - - - - - - - - - - - - - - - - -
 
@@ -102,7 +103,6 @@ FILENAME= trainer
 
 ##### Job - - - - - - - - - - - - - - - - - - - - - - - - -
 
-JOB_NAME=
 
 
 run_locally:
@@ -145,3 +145,33 @@ heroku_create_app:
 deploy_heroku:
 	-@git push heroku master
 	-@heroku ps:scale web=1
+
+
+MODEL_NAME = sentiment_test_1
+PATH_JSON = "raw_data/prediction_input.json"
+VERSION_NAME = 1
+
+
+predict_locally:
+	gcloud ai-platform local predict \
+		--model-dir gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER_nlp}  \
+		--json-instances ${PATH_JSON} \
+		--framework tensorflow
+
+create_model_instance:
+	gcloud ai-platform models create ${MODEL_NAME} \
+	--regions ${REGION}
+
+create:
+	gcloud ai-platform versions create ${VERSION_NAME} \
+		--model ${MODEL_NAME} \
+		--origin gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER_nlp} \
+		--runtime-version=1.15 \
+		--python-version=3.7
+  
+create2:
+
+	gcloud ai-platform predict --model $MODEL_NAME  \
+					--version $VERSION_NAME \
+					--json-instances $INPUT_DATA_FILE   
+
