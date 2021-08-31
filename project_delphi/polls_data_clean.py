@@ -1,6 +1,8 @@
 import gepd
 import numpy as np
 import pandas as pd
+import datetime
+
 
 def get_data(**kwargs):
     data = gepd.gepd()
@@ -20,8 +22,14 @@ def get_parties(**kwargs):
 
 def clean_data():
 
-    start_date = "2021-05-24"
-    end_date = "2021-08-24"
+    current_time = datetime.datetime.today()
+    # get current time yesterday
+    current_time_yesterday = (current_time - datetime.timedelta(1))
+    # convert to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
+    # this is UTC; we are not accounting for german time zone +02:00
+    start_date = "2021-05-22"
+    end_date = f"{str(current_time)[:10]}"
+
     other_parties = ["Sonstige", "Freie Wähler", "BP","Die PARTEI", "SSW", "BVB/FW", "NPD", "Piraten",\
                     "BIW", "Tierschutzpartei"]
 
@@ -46,10 +54,9 @@ def clean_data():
 
     df_dated = correct_dates.merge(df_dated_grouped, how = "left", left_on= 0 , right_on = ["Date" ]).set_index([0])
 
-    df_dated = df_dated.where(df_dated.notnull() , other=(df_dated.fillna(method='ffill')\
-    + df_dated.fillna(method='bfill'))/2)
+    df_dated = df_dated.fillna(method='ffill')
 
-    df_final =  df_dated.iloc[2:-2].round(2)
+    df_final =  df_dated.iloc[2:].round(2)
     df_final.index.name = 'Date'
 
     df_final["Surveyed_Persons"] = df_final["Surveyed_Persons"].astype(int)
