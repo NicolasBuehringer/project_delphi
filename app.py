@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import streamlit as st
 import requests
+import os
 #import seaborn as sns
 from io import BytesIO
 #import plotly.express as px  #need to be included in requirements
@@ -15,6 +16,25 @@ st.set_page_config(layout="wide")
 #GCP
 
 from google.cloud import storage
+
+# create credentials file
+google_credentials_file = os.environ["GOOGLE_APPLICATION_CREDENTIALS"]
+
+if not os.path.isfile(google_credentials_file):
+
+    print("write credentials file 🔥" + f"\n- path: {google_credentials_file}")
+
+    # retrieve credentials
+    json_credentials = os.environ["GOOGLE_CREDS"]
+
+    # write credentials
+    with open(google_credentials_file, "w") as file:
+
+        file.write(json_credentials)
+
+else:
+
+    print("credentials file already exists 🎉")
 
 
 def download_blob():
