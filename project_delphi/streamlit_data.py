@@ -6,6 +6,8 @@ def poll_for_streamlit():
 
     #get poll data
     polls = clean_data()
+    polls.drop(columns=["Surveyed_Persons"], inplace=True)
+    polls.set_index("Date", inplace=True)
 
     # Return latest poll
     latest_poll = polls.iloc[[-1]]

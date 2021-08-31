@@ -66,13 +66,13 @@ else:
 
 
 @st.cache(allow_output_mutation=True)
-def get_data_from_gcp(path, local=False):
+def get_data_from_gcp(path, local=False, index_column=None):
     """method to get the training data (or a portion of it) from google cloud bucket"""
     # Add Client() here
     client = storage.Client()
     #if local:
     #    path = "raw_data/most_liked_tweets.csv"
-    df = pd.read_csv(path)
+    df = pd.read_csv(path, index_col=index_column)
     return df
 
 # Links for all datasets needed to be displayed on Heroku
@@ -113,7 +113,7 @@ SPD_poll = current_poll.loc[0,"SPD"]
 OTHER_poll = current_poll.loc[0,"other"]
 
 # Poll data and prediction over time
-historic_polls = get_data_from_gcp(link_historic_polls)
+historic_polls = get_data_from_gcp(link_historic_polls, index_column="Date")
 
 # Engineered Twitter Features (KPIs) via Delphi API
 tweet_kpis = get_data_from_gcp(link_tweet_kpis)
@@ -225,11 +225,7 @@ st.markdown("## Timeline: Delphi vs. poll forecast")
 st.markdown("Line graph comparing prediciton from Delphi with poll per party over time (e.g. last week)")
 
 # Mock data for chart
-np.random.seed(2021)
-N = 10
-rng = pd.date_range(start='2021-08-16', end='2021-08-25')
-df = pd.DataFrame(np.random.uniform(5, 20, size=(10,14)), columns=["CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others", "CSU_poll", "SPD_poll", "Grünen_poll", "FDP_poll", "Linken_poll", "AFD_poll", "Others_poll"], index=rng)
-st.line_chart(df)
+st.line_chart(historic_polls)
 
 st.markdown("""---""")
 
