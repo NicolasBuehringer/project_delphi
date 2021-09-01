@@ -96,7 +96,7 @@ def creating_subsequences(df_train_scaled):
         return list_of_X, list_of_y
 
     # Creating subsequences of lenght specifided (28 / 7parties = 4 days)
-    X_train , y_train = multiple_subsequences(pd.DataFrame(df_train_scaled), 28 )
+    X_train , y_train = multiple_subsequences(pd.DataFrame(df_train_scaled), 21 )
 
     # Transforn to array to fit model
     X_train = np.array(X_train)
@@ -144,7 +144,15 @@ def model_prediction(model, df_test_scaled):
 
     #prediction_dict = df_prediction_2.to_dict("records")[0]
 
-    return prediction_dict
+    return df_prediction_2
+
+def merge_date(df_prediction_2, df_merged_final_test):
+
+    prediction_date = df_merged_final_test["tweet_date"].iloc[-2]
+
+    df_prediction_2.index = [prediction_date]
+
+    return df_prediction_2
 
 
 if __name__ == "__main__":
@@ -161,10 +169,9 @@ if __name__ == "__main__":
 
     model = rnn_fit_compile(X_train, y_train)
 
-    prediction_dict = model_prediction(model, df_test_scaled)
+    prediction_df = model_prediction(model, df_test_scaled)
 
-    print(prediction_dict)
+    prediction_df = merge_date(prediction_df, df_merged_final_test)
 
-
-
+    print(prediction_df)
 
