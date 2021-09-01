@@ -38,18 +38,21 @@ def load_and_clean_csv(df):
                 'following_count',
                 'user_tweet_count',
                 'location',
-                'sentiment'
+                'sentiment',
+                'username'
                 ]]
 
     # Clean dataset columns:
     # Change dtype
     df["tweet_date"] = df["tweet_date"].astype(str)
     df = df[df.tweet_date.str.match('(\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2})')]
-    #df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
+    df = df[(df.tweet_date.str.len() == 23) | (df.tweet_date.str.len() == 24)]
     df['tweet_date'] = df['tweet_date'].str.slice(0,19)
     df["tweet_date"] = pd.to_datetime(df["tweet_date"])
-    import ipdb
-    ipdb.set_trace()
+
+    df["profile_creation_date"] = df["profile_creation_date"].astype(str)
+    df = df[df.profile_creation_date.str.match(
+        '(\d{4}-\d{2}-\d{2}.\d{2}:\d{2}:\d{2})')]
     df['profile_creation_date'] = df['profile_creation_date'].str.slice(0,19)
     df["profile_creation_date"] = pd.to_datetime(df["profile_creation_date"])
     # Drop duplicates
@@ -89,6 +92,8 @@ def create_non_sentiment_features(df):
     df["avg_followers_count"] = df["avg_followers_count"].astype(float)
     df["avg_following_count"] = df["avg_following_count"].astype(float)
     df["avg_user_tweet_count"] = df["avg_user_tweet_count"].astype(float)
+
+    df["tweet_date"] = pd.to_datetime(df["tweet_date"])
 
     #Create temporary DF
     df_temp = df.groupby([pd.Grouper(key='tweet_date',freq='D'), 'party']).agg({
@@ -150,6 +155,9 @@ def create_sentiment_features(df):
 
     df["share_of_positive_tweets2"] = df["share_of_positive_tweets"]
     df["share_of_negative_tweets2"] = df["share_of_negative_tweets"]
+
+    df["tweet_date"] = pd.to_datetime(df["tweet_date"])
+
     df = df.groupby([pd.Grouper(key='tweet_date',freq='D'), "party"]).agg({
         "weighted_sentiment": "mean",
         "share_of_positive_tweets": "sum",
@@ -205,9 +213,9 @@ def create_rnn_final_df(df_poll ,df_joined):
 
 
 def get_features(df):
-    df_clean = load_and_clean_csv(df)
-    df_non_sentiment = create_non_sentiment_features(df_clean)
-    df_sentiment = create_sentiment_features(df_clean)
+    #df_clean = load_and_clean_csv(df)
+    df_non_sentiment = create_non_sentiment_features(df)
+    df_sentiment = create_sentiment_features(df)
     df_joined = join_features(df_non_sentiment, df_sentiment)
     df_poll = load_poll_df()
     df_final = create_rnn_final_df(df_poll, df_joined)

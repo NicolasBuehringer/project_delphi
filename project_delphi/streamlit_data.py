@@ -1,3 +1,4 @@
+import ipdb
 from project_delphi.polls_data_clean import clean_data
 from google.cloud import storage
 from project_delphi.params import BUCKET_NAME
@@ -114,6 +115,8 @@ def most_popular_tweets(df, tweet_date):
 
 
 def upload_streamlit_data_to_gcp(df, filename, index=False):
+    os.environ[
+        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     client = storage.Client()
     STORAGE_LOCATION = f"streamlit/{filename}.csv"
     bucket = client.bucket(BUCKET_NAME)
@@ -131,7 +134,11 @@ def get_streamlit_data(feature_database, daily_database, days_ago=1):
     2. Tweet KPIs history
     3. Most liked/ most retweeted positive and negative tweets
     '''
-    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    # ungroup database
+    feature_database.reset_index(inplace=True)
+
+    os.environ[
+        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     # Save Poll data as .csv and upload to GCP
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)
