@@ -25,6 +25,8 @@ def run_app(start_time, end_time):
 
     tweet_database = pd.read_csv("~/Downloads/tweet_database_08_31.csv",
                                  lineterminator="\n")
+
+
     tweet_database = load_and_clean_csv(tweet_database)
     features_database = get_features(tweet_database)
     print(features_database.columns)
