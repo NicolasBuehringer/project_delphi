@@ -131,8 +131,7 @@ def get_streamlit_data(feature_database, daily_database, days_ago=1):
     2. Tweet KPIs history
     3. Most liked/ most retweeted positive and negative tweets
     '''
-    os.environ[
-        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     # Save Poll data as .csv and upload to GCP
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)
