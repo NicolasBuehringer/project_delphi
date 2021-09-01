@@ -150,7 +150,7 @@ def model_prediction(model, df_test_scaled):
 
 def merge_date(df_prediction_2, df_merged_final_test):
 
-    prediction_date = df_merged_final_test["tweet_date"].iloc[-2]
+    prediction_date = get_date_n_days_ago().replace("_","-")
 
     df_prediction_2.index = [prediction_date]
 
@@ -198,7 +198,7 @@ def update_predicition_db(df_prediction):
 def rnn_model_predict(df):
     ''' Takes engineered twitter features and poll data
     and trains RNN and makes prediction for next day. Returns df'''
-
+    df.reset_index(inplace=True)
     df_merged = get_clean_dataframe(df)
 
     df_merged_final_test, df_merged_final = split_data(df_merged)

@@ -24,12 +24,13 @@ def run_app(start_time, end_time):
 
     #tweet_database = merge_daily_to_master(daily_database)
 
-    tweet_database = pd.read_csv("notebooks/02luca/data_final_20210826_v3.csv",
-                                 lineterminator="\n")
+    tweet_database = pd.read_csv(
+        "notebooks/03nicolas/new_master_clean_for_upload.csv",
+        lineterminator="\n")
 
 
     #tweet_database = load_and_clean_csv(tweet_database)
-    #features_database = get_features(tweet_database)
+    features_database = get_features(tweet_database)
     #print(features_database.columns)
 
     #get_streamlit_data(
@@ -37,7 +38,7 @@ def run_app(start_time, end_time):
     #    tweet_database
     #)
 
-    rnn_model_predict(tweet_database)
+    rnn_model_predict(features_database)
 
     # website_features = get_streamlit_data(tweet_database)
 

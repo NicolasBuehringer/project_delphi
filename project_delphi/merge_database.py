@@ -29,7 +29,7 @@ def merge_daily_to_master(daily_database):
     new_master_database = pd.concat([old_master_database, daily_database])
 
     # save new database as csv
-    new_master_database.to_csv(f"tweet_database_{date_yesterday[:10]}.csv")
+    #new_master_database.to_csv(f"tweet_database_{date_yesterday[:10]}.csv")
 
     # upload new master_database
     client = storage.Client()
@@ -40,11 +40,11 @@ def merge_daily_to_master(daily_database):
     bucket = client.bucket(BUCKET_NAME)
 
     blob = bucket.blob(STORAGE_LOCATION)
-
+    blob.upload_from_string(new_master_database.to_csv(index=False), 'text/csv')
     # upload saved csv
-    blob.upload_from_filename(
-        f"tweet_database_{date_yesterday[:10]}.csv"
-    )
+    #blob.upload_from_string(
+    #    f"tweet_database_{date_yesterday[:10]}.csv"
+    #)
 
     # return new_master_database for next function in run_app
     return new_master_database
