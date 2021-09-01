@@ -15,7 +15,6 @@ def run_app(start_time, end_time):
     3. download old tweet database, concats new daily database, uploads it to gcs and saves it in tweet_database
     """
 
-
     daily_raw_tweets = get_data(start_time, end_time)
 
     daily_database = get_sentiment(daily_raw_tweets)
