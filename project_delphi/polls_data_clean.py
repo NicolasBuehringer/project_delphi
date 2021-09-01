@@ -20,15 +20,19 @@ def get_parties(**kwargs):
         parties_dict_short[key] = value["Shortcut"]
     return parties_dict_short
 
-def clean_data():
+def clean_data(yesterday = False):
 
     current_time = datetime.datetime.today()
     # get current time yesterday
-    current_time_yesterday = (current_time - datetime.timedelta(1))
+    # current_time_yesterday = (current_time - datetime.timedelta(1))
     # convert to ISO 8601: YYYY-MM-DDTHH:mm:ssZ
     # this is UTC; we are not accounting for german time zone +02:00
     start_date = "2021-05-22"
     end_date = f"{str(current_time)[:10]}"
+
+    if yesterday:
+        end_date = str(current_time - datetime.timedelta(1))[:10]
+
 
     other_parties = ["Sonstige", "Freie Wähler", "BP","Die PARTEI", "SSW", "BVB/FW", "NPD", "Piraten",\
                     "BIW", "Tierschutzpartei"]
