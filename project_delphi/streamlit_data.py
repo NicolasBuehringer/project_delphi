@@ -114,6 +114,18 @@ def most_popular_tweets(df, tweet_date):
     return most_liked_tweets, most_retweeted_tweets
 
 
+def no_of_tweets(daily_database, twitter_master_db):
+    '''Returns df with total no of tweets in masterdatabase and total no. tweets today'''
+
+    no_of_tweet_df = pd.DataFrame(
+        {"no_tweets_today": daily_database.shape[0],
+        "no_tweets_total": twitter_master_db.shape[0]},
+        index=[0])
+
+    return no_of_tweet_df
+
+
+
 def upload_streamlit_data_to_gcp(df, filename, index=False):
     os.environ[
         "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
@@ -126,35 +138,32 @@ def upload_streamlit_data_to_gcp(df, filename, index=False):
     print("Upload completed")
 
 
-def get_streamlit_data(feature_database, daily_database, days_ago=1):
+def get_streamlit_data(feature_database, daily_database, twitter_master_db, days_ago=1):
     '''
     Takes in engineered features df and daily tweets + sentiment df
     and creates tables to be displayed on streamlit and uploads them to GCP
     1. Poll history and most recent poll
     2. Tweet KPIs history
     3. Most liked/ most retweeted positive and negative tweets
+    4. No. of tweets of today and total no of tweets in db
     '''
     # ungroup database
     feature_database.reset_index(inplace=True)
 
-    os.environ[
-        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     # Save Poll data as .csv and upload to GCP
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)
     upload_streamlit_data_to_gcp(latest_poll, "latest_poll", index=True)
 
     # Save Tweet Kpis as .csv and upload to GCP
-    #test_kpi = pd.read_csv("raw_data/data_final_20210826_v1.csv")
     tweet_kpis = tweet_kpis_for_streamlit(feature_database)
     upload_streamlit_data_to_gcp(tweet_kpis, "tweet_kpis", index=False)
 
     # Save most liked/ most retweeted positive and negative tweets and upload to GCP
-    #test = pd.read_csv("raw_data/df_all_v2.csv")
     tweet_date = get_date_n_days_ago(days_ago)
     tweet_date = tweet_date.replace("_", "-")
 
-    #tweet_date = "2021-08-26"
     most_liked_tweets, most_retweeted_tweets = most_popular_tweets(
         daily_database, tweet_date)
     upload_streamlit_data_to_gcp(most_liked_tweets,
@@ -163,6 +172,10 @@ def get_streamlit_data(feature_database, daily_database, days_ago=1):
     upload_streamlit_data_to_gcp(most_retweeted_tweets,
                                  "most_retweeted_tweets",
                                  index=False)
+
+    # Save No. of tweets of today and total no of tweets in db and upload to GCP
+    no_tweets = no_of_tweets(daily_database, twitter_master_db)
+    upload_streamlit_data_to_gcp(no_tweets, "no_of_tweets", index=False)
 
 
 
