@@ -242,6 +242,11 @@ selected_party = col16.selectbox("Filter for party", parties_select)
 # Twitter Key Metrics
 col11, col12, col13, col14 = st.columns((1,1,1,1))
 
+# Total no. of tweets analyzed
+# No. of tweets today
+
+
+
 label = ["CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]
 colors = ["black", "red", "green", "yellow", "purple", "blue", "grey"]
 

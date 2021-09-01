@@ -169,7 +169,7 @@ def join_features(df1, df2):
 
 
 def load_poll_df():
-    df = clean_data()
+    df = clean_data(yesterday=True)
     df = df[["Date", "CDU/CSU", 'SPD', 'Grüne', 'FDP', "Linke", 'AfD', 'other']]
     return df
 
