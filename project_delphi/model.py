@@ -148,7 +148,7 @@ def model_prediction(model, df_test_scaled):
     return df_prediction_scaled
 
 
-def merge_date(df_prediction_2, df_merged_final_test):
+def merge_date(df_prediction_2):
 
     prediction_date = get_date_n_days_ago().replace("_","-")
 
@@ -211,7 +211,7 @@ def rnn_model_predict(df):
 
     prediction = model_prediction(model, df_test_scaled)
 
-    prediction = merge_date(prediction, df_merged_final_test)
+    prediction = merge_date(prediction)
 
     update_predicition_db(prediction)
 

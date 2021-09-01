@@ -16,27 +16,21 @@ def run_app(start_time, end_time):
     """
 
 
-    #daily_raw_tweets = get_data(start_time, end_time)
+    daily_raw_tweets = get_data(start_time, end_time)
 
-    #daily_database = get_sentiment(daily_raw_tweets)
+    daily_database = get_sentiment(daily_raw_tweets)
 
-    # daily_database = load_and_clean_csv(daily_database)
+    daily_database = load_and_clean_csv(daily_database)
 
-    #tweet_database = merge_daily_to_master(daily_database)
+    tweet_database = merge_daily_to_master(daily_database)
 
-    tweet_database = pd.read_csv(
-        "notebooks/03nicolas/new_master_clean_for_upload.csv",
-        lineterminator="\n")
-
-
-    #tweet_database = load_and_clean_csv(tweet_database)
     features_database = get_features(tweet_database)
     #print(features_database.columns)
 
-    #get_streamlit_data(
-    #    features_database,
-    #    tweet_database
-    #)
+    get_streamlit_data(
+        features_database,
+        tweet_database
+    )
 
     rnn_model_predict(features_database)
 
