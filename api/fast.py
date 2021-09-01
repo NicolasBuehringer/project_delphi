@@ -29,5 +29,5 @@ def index():
 @app.post("/run_app/")
 def execute_function(start_time, end_time):
     run_app(start_time, end_time)
-    return "Finished"
+    return "This finished"
     #run_app(start_time, end_time)
