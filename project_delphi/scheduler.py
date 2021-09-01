@@ -23,7 +23,7 @@ def run_app(start_time, end_time):
 
     #tweet_database = merge_daily_to_master(daily_database)
 
-    tweet_database = pd.read_csv("~/Downloads/temp_tweet_database_08_31.csv",
+    tweet_database = pd.read_csv("~/Downloads/tweet_database_08_31.csv",
                                  lineterminator="\n")
     tweet_database = load_and_clean_csv(tweet_database)
     features_database = get_features(tweet_database)
