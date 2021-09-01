@@ -8,7 +8,7 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
-tensorflow.keras
+tensorflow
 datetime
 
 # tests/linter
