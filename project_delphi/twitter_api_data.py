@@ -154,7 +154,7 @@ def search_twitter(party, keywords, start_time,
     # return a DataFrame with all tweets for one time period
     return one_party_df
 
-def get_data(start_time = False, end_time=False):
+def get_data(start_time, end_time):
     """
     Returns a DataFrame containing all tweets for one day for 7 diffrent search keywords
     for each party defined in query_dict
