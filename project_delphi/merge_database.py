@@ -22,7 +22,7 @@ def merge_daily_to_master(daily_database):
 
     # download old master_database
     old_master_database = pd.read_csv(
-        f"gs://project_delphi_bucket/tweets/tweet_database_{date_two_days_ago[:10]}.csv"
+        f"gs://project_delphi_bucket/tweets/tweet_database_{date_two_days_ago[:10]}.csv", lineterminator="\n"
     )
 
     # concat daily database with old master

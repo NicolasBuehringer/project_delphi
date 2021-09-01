@@ -20,7 +20,7 @@ def get_sentiment(raw_tweets):
 
     # iterate over a range of 0, len_dataframe with step size 987
     for i in range(0,max_len, x):
-
+        print(i)
         # slice dataframe for the current 987 rows
         temp = raw_tweets.iloc[i: (i + x)]
 

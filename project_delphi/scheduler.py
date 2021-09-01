@@ -25,7 +25,7 @@ def run_app(start_time, end_time):
     tweet_database = merge_daily_to_master(daily_database)
 
     features_database = get_features(tweet_database)
-    #print(features_database.columns)
+
 
     get_streamlit_data(
         features_database,
@@ -33,7 +33,3 @@ def run_app(start_time, end_time):
     )
 
     rnn_model_predict(features_database)
-
-    # website_features = get_streamlit_data(tweet_database)
-
-    # prediction = run_model(feature_database)

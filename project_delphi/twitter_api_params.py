@@ -90,11 +90,11 @@ lang:de -is:retweet
 
 # create a query dict to iterate over with the party name, its search string and the maximum number of tweets
 query_dict = {
-    "SPD": (query_spd, 50000),
-    "AFD": (query_afd, 30000),
-    "CDU": (query_cdu, 50000),
-    "FDP": (query_fdp, 30000),
-    "GRUENE": (query_gruene, 50000),
-    "LINKE": (query_linke, 20000),
-    "OTHER": (query_others, 20000)
+    "SPD": (query_spd, 80000),
+    "AFD": (query_afd, 60000),
+    "CDU": (query_cdu, 80000),
+    "FDP": (query_fdp, 60000),
+    "GRUENE": (query_gruene, 80000),
+    "LINKE": (query_linke, 40000),
+    "OTHER": (query_others, 40000)
 }
