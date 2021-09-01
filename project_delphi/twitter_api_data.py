@@ -103,7 +103,7 @@ def call_api(headers,
 def search_twitter(party, keywords, start_time,
              end_time, max_results, tweet_amount):
     """
-    Searches twitter for a keywords searchstring until a maximum 'tweet_amount' has been reached or
+    Searches twitter for a keyword searchstring until a maximum 'tweet_amount' has been reached or
     there are no more results and next_token is False.
     Returns a DataFrame containing all fetched information
     """
@@ -113,7 +113,7 @@ def search_twitter(party, keywords, start_time,
     headers = get_credentials()
 
     # set collected tweet counter to zero
-    collected_tweets = 0
+    counter = 0
 
     # call the api the first time resulting in a returned DataFrame, the next token and number of collected tweets
     single_api_call_df, next_token, collected_tweets = call_api(headers, keywords,
@@ -125,7 +125,7 @@ def search_twitter(party, keywords, start_time,
     one_party_df = pd.concat([one_party_df, single_api_call_df], ignore_index=True)
 
     # add number of fetched tweets to counter
-    collected_tweets += collected_tweets
+    counter += collected_tweets
 
     # while there is a next token in api call result
     # call the api again with the next_token as additional parameter until the value becomes false
@@ -137,15 +137,15 @@ def search_twitter(party, keywords, start_time,
                                        start_time, end_time,
                                        max_results,
                                        new_token=next_token)
-        print(collected_tweets)
+        print(counter)
         # save result and add number of tweets
         one_party_df = pd.concat([one_party_df, single_api_call_df], ignore_index=True)
-        collected_tweets += collected_tweets
+        counter += collected_tweets
 
 
         # break the loop if the predefined search limit is reached
-        if collected_tweets > tweet_amount:
-            print(f"Reached predefined search limit of {tweet_amount} tweets")
+        if counter > tweet_amount:
+            print(f"Reached predefined search limit of {counter} tweets")
             break
 
     # after collecting all tweets create a new column containing the party's name

@@ -96,5 +96,5 @@ query_dict = {
     "FDP": (query_fdp, 30000),
     "GRUENE": (query_gruene, 50000),
     "LINKE": (query_linke, 20000),
-    "OTHERS": (query_others, 20000)
+    "OTHER": (query_others, 20000)
 }
