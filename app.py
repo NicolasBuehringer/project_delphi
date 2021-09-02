@@ -1,4 +1,5 @@
 #Imports
+from project_delphi.utils import get_date_n_days_ago
 from google.cloud import storage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -7,7 +8,7 @@ from io import BytesIO
 import pandas as pd
 import numpy as np
 import streamlit as st
-#import requests
+import datetime
 import os
 
 #Set page layout to wide
@@ -69,6 +70,9 @@ def get_data_from_gcp(path, index_column=None):
     df = pd.read_csv(path, index_col=index_column)
     return df
 
+date_today = get_date_n_days_ago()
+date_today
+
 
 # Links for all datasets needed to be displayed on Heroku
 link_current_poll = "gs://project_delphi_bucket/streamlit/latest_poll.csv"
@@ -77,7 +81,7 @@ link_tweet_kpis = "gs://project_delphi_bucket/streamlit/tweet_kpis.csv"
 link_most_liked_tweets = "gs://project_delphi_bucket/streamlit/most_liked_tweets.csv"
 link_most_retweeted_tweets = "gs://project_delphi_bucket/streamlit/most_retweeted_tweets.csv"
 link_logo = "gs://project_delphi_bucket/streamlit/delphi_project_logo_dark.png"
-link_predicition = "gs://project_delphi_bucket/streamlit/prediction_database/prediciton_2021_09_01.csv"
+link_predicition = f"gs://project_delphi_bucket/streamlit/prediction_database/prediction_{date_today}.csv"
 link_no_of_tweets = "gs://project_delphi_bucket/streamlit/no_of_tweets.csv"
 
 # ---------------------------------------------------------
@@ -91,7 +95,7 @@ logo_img = download_blob()
 #url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
 
 #response = requests.get(url_delphi).json()
-forecast = get_data_from_gcp(link_predicition, index_column="Unnamed: 0")
+forecast = get_data_from_gcp(link_predicition, index_column="Date")
 AFD_forecast = round(forecast.iloc[-1]["AFD"], 3)*100
 CDU_forecast = round(forecast.iloc[-1]["CDU"], 3)*100
 FDP_forecast = round(forecast.iloc[-1]["FDP"], 3)*100
