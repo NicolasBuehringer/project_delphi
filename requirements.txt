@@ -21,19 +21,20 @@ yapf
 # API
 gcsfs
 google-cloud-storage
-mlflow
+#mlflow
 s3fs
 
 # utilities
 six>=1.14
-joblib
-memoized-property
+#joblib
+#memoized-property
 termcolor
 
-uvicorn
-fastapi
-joblib
+#uvicorn
+#fastapi
+#joblib
 streamlit
 requests
 matplotlib
 python-dotenv
+plotly
