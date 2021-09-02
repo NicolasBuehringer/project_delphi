@@ -189,7 +189,7 @@ def update_predicition_db(df_prediction):
 
     # upload as csv
     print(f"Start upload DataFrame to {STORAGE_LOCATION}")
-    blob.upload_from_string(new_master_database.to_csv(),
+    blob.upload_from_string(new_master_database.to_csv(index=False),
                             'text/csv')
     print("Upload completed")
 
