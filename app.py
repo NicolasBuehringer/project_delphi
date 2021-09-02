@@ -1,5 +1,4 @@
 #Imports
-#from project_delphi.utils import get_date_n_days_ago
 from google.cloud import storage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -59,8 +58,6 @@ def download_blob():
 
 
 
-
-
 def get_data_from_gcp(path, index_column=None):
     """method to get the required data from google cloud bucket"""
 
@@ -78,8 +75,6 @@ def get_date():
 
 
 date_today = get_date()
-date_today
-
 
 # Links for all datasets needed to be displayed on Heroku
 link_current_poll = "gs://project_delphi_bucket/streamlit/latest_poll.csv"
@@ -98,7 +93,7 @@ link_no_of_tweets = "gs://project_delphi_bucket/streamlit/no_of_tweets.csv"
 # Project Delphi Logo
 logo_img = download_blob()
 
-# Forecast from Delphi API
+# Forecast from Delphi model
 #url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
 
 #response = requests.get(url_delphi).json()
