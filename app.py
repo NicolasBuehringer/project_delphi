@@ -1,5 +1,5 @@
 #Imports
-from project_delphi.utils import get_date_n_days_ago
+#from project_delphi.utils import get_date_n_days_ago
 from google.cloud import storage
 import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
@@ -70,7 +70,14 @@ def get_data_from_gcp(path, index_column=None):
     df = pd.read_csv(path, index_col=index_column)
     return df
 
-date_today = get_date_n_days_ago()
+def get_date():
+    # get current time as datetime
+    current_time = datetime.datetime.today()
+    current_time = str(current_time)
+    return f"{current_time[:4]}_{current_time[5:7]}_{current_time[8:10]}"
+
+
+date_today = get_date()
 date_today
 
 
