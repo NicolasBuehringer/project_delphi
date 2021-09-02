@@ -61,6 +61,10 @@ def load_and_clean_csv(df):
     dict_to_numeric = {"negative": -2, "neutral": 1, "positive": 2}
     df["sentiment"].replace(dict_to_numeric, inplace=True)
 
+    # somehow the api can return a tweet with every value being nan except text and creation date;
+    # this drops every row where there are less than 7 numerical values
+    df.dropna(thresh=7, inplace=True)
+
     return df
 
 

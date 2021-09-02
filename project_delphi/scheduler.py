@@ -26,23 +26,27 @@ def run_app(start_time, end_time):
 
     #daily_database = get_sentiment(daily_raw_tweets)
     #print(f"----- 2. FINISHED AT {datetime.datetime.today()} -----")
-    tweet_database = pd.read_csv(
-        "/Users/nicolas/Downloads/tweets_tweet_database_2021_09_01.csv",
-        lineterminator="\n")
+    daily_database = pd.read_csv("raw_tweets_sentiment_2021_09_01.csv", lineterminator="\n")
 
-    #daily_database = load_and_clean_csv(daily_database)
-    #print(f"----- 3. FINISHED AT {datetime.datetime.today()} -----")
+
+    daily_database = load_and_clean_csv(daily_database)
+    print(f"----- 3. FINISHED AT {datetime.datetime.today()} -----")
 
     #tweet_database = merge_daily_to_master(daily_database)
     #print(f"----- 4. FINISHED AT {datetime.datetime.today()} -----")
+
+    tweet_database = pd.read_csv("new_database.csv", lineterminator="\n")
+
 
     features_database = get_features(tweet_database)
     print(f"----- 5. FINISHED AT {datetime.datetime.today()} -----")
 
     get_streamlit_data(
         features_database,
+        daily_database,
         tweet_database
     )
+
     print(f"----- 6. FINISHED AT {datetime.datetime.today()} -----")
 
     rnn_model_predict(features_database)
