@@ -41,7 +41,7 @@ def connect_to_endpoint(url, headers, params, next_token):
 
     # call api
     response = requests.request("GET", url, headers = headers, params = params)
-
+    print(response.headers["x-rate-limit-remaining"])
     if response.status_code != 200:
         raise Exception(response.status_code, response.text)
 
@@ -81,6 +81,7 @@ def call_api(headers,
                              'created_at': "tweet_created_at"},
                     inplace=True)
 
+    print(tweet_df.iloc[-1]["tweet_created_at"])
     # create second DataFrame about users out of response key
     user_df = pd.json_normalize(response["includes"]["users"])
 
@@ -131,13 +132,13 @@ def search_twitter(party, keywords, start_time,
     # call the api again with the next_token as additional parameter until the value becomes false
     while next_token:
 
-
+        print(f"Currently at party {party} and in total {counter} tweets")
         # call api with new next_token
         single_api_call_df, next_token, collected_tweets = call_api(headers, keywords,
                                        start_time, end_time,
                                        max_results,
                                        new_token=next_token)
-        print(counter)
+
         # save result and add number of tweets
         one_party_df = pd.concat([one_party_df, single_api_call_df], ignore_index=True)
         counter += collected_tweets
@@ -154,7 +155,7 @@ def search_twitter(party, keywords, start_time,
     # return a DataFrame with all tweets for one time period
     return one_party_df
 
-def get_data(start_time = False, end_time=False):
+def get_data(start_time, end_time):
     """
     Returns a DataFrame containing all tweets for one day for 7 diffrent search keywords
     for each party defined in query_dict

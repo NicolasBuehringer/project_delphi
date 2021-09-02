@@ -17,7 +17,7 @@ from google.cloud import storage
 
 def stupid_data_function():
 
-    df = pd.read_csv("../notebooks/02luca/data_final_20210826_v3.csv")
+    df = pd.read_csv("notebooks/02luca/data_final_20210826_v3.csv")
 
     return df
 
@@ -145,11 +145,12 @@ def model_prediction(model, df_test_scaled):
 
     #prediction_dict = df_prediction_2.to_dict("records")[0]
 
-    return df_prediction_2
+    return df_prediction_scaled
 
-def merge_date(df_prediction_2, df_merged_final_test):
 
-    prediction_date = df_merged_final_test["tweet_date"].iloc[-2]
+def merge_date(df_prediction_2):
+
+    prediction_date = get_date_n_days_ago().replace("_","-")
 
     df_prediction_2.index = [prediction_date]
 
@@ -162,7 +163,7 @@ def update_predicition_db(df_prediction):
     and uploads the new master_database with new filename.
     Returns new_master_database for further usage (streamlit)
     """
-    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
 
     # get dates in format YYYY_MM_DD
     date_yesterday = get_date_n_days_ago(1)
@@ -170,26 +171,24 @@ def update_predicition_db(df_prediction):
 
     # download old master_database
     old_master_database = pd.read_csv(
-        f"gs://project_delphi_bucket/streamlit/prediciton_database_{date_yesterday[:10]}.csv"
+        f"gs://project_delphi_bucket/streamlit/prediction_database/prediciton_{date_yesterday[:10]}.csv"
     )
 
     # concat daily database with old master
     new_master_database = pd.concat([old_master_database, df_prediction])
 
-    # save new database as csv
-    new_master_database.to_csv(f"tweet_database_{date_today[:10]}.csv")
-
     # upload new master_database
     client = storage.Client()
 
     # define storage location
-    STORAGE_LOCATION = f"tweets/tweet_database_{date_today[:10]}.csv"
+    STORAGE_LOCATION = f"streamlit/prediction_database/prediciton_{date_today[:10]}.csv"
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(STORAGE_LOCATION)
 
     # upload as csv
     print(f"Start upload DataFrame to {STORAGE_LOCATION}")
-    blob.upload_from_string(df.to_csv(index=False), 'text/csv')
+    blob.upload_from_string(new_master_database.to_csv(),
+                            'text/csv')
     print("Upload completed")
 
 
@@ -199,7 +198,7 @@ def update_predicition_db(df_prediction):
 def rnn_model_predict(df):
     ''' Takes engineered twitter features and poll data
     and trains RNN and makes prediction for next day. Returns df'''
-
+    df.reset_index(inplace=True)
     df_merged = get_clean_dataframe(df)
 
     df_merged_final_test, df_merged_final = split_data(df_merged)
@@ -211,6 +210,8 @@ def rnn_model_predict(df):
     model = rnn_fit_compile(X_train, y_train)
 
     prediction = model_prediction(model, df_test_scaled)
+
+    prediction = merge_date(prediction)
 
     update_predicition_db(prediction)
 
