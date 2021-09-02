@@ -7,8 +7,8 @@ wheel>=0.29
 # data science
 numpy
 pandas
-#scikit-learn
-#tensorflow
+scikit-learn
+tensorflow
 datetime
 
 # tests/linter

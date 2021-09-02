@@ -2,7 +2,7 @@
 #          INSTALL & TEST
 # ----------------------------------
 install_requirements:
-	@pip install -r requirements.txt
+	@pip install -r requirements_Docker.txt
 
 check_code:
 	@flake8 scripts/* project_delphi/*.py
@@ -168,10 +168,9 @@ create:
 		--origin gs://${BUCKET_NAME}/${BUCKET_TRAINING_FOLDER_nlp} \
 		--runtime-version=1.15 \
 		--python-version=3.7
-  
+
 create2:
 
 	gcloud ai-platform predict --model $MODEL_NAME  \
 					--version $VERSION_NAME \
-					--json-instances $INPUT_DATA_FILE   
-
+					--json-instances $INPUT_DATA_FILE
