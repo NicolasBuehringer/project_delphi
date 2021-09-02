@@ -18,25 +18,20 @@ def run_app(start_time, end_time):
     6. Collect data for streamlit website and upload it to gcp
     7. Run model with all data and upload prediction to gcp
     """
-    #print(f"----- STARTING AT {datetime.datetime.today()} -----")
+    print(f"----- STARTING AT {datetime.datetime.today()} -----")
 
-    #daily_raw_tweets = get_data(start_time, end_time)
-    #print(f"----- 1. FINISHED AT {datetime.datetime.today()} -----")
-    #print(f"Fetched {len(daily_raw_tweets)} tweets from yesterday")
+    daily_raw_tweets = get_data(start_time, end_time)
+    print(f"----- 1. FINISHED AT {datetime.datetime.today()} -----")
+    print(f"Fetched {len(daily_raw_tweets)} tweets from yesterday")
 
-    #daily_database = get_sentiment(daily_raw_tweets)
-    #print(f"----- 2. FINISHED AT {datetime.datetime.today()} -----")
-    daily_database = pd.read_csv("raw_tweets_sentiment_2021_09_01.csv", lineterminator="\n")
-
+    daily_database = get_sentiment(daily_raw_tweets)
+    print(f"----- 2. FINISHED AT {datetime.datetime.today()} -----")
 
     daily_database = load_and_clean_csv(daily_database)
     print(f"----- 3. FINISHED AT {datetime.datetime.today()} -----")
 
-    #tweet_database = merge_daily_to_master(daily_database)
-    #print(f"----- 4. FINISHED AT {datetime.datetime.today()} -----")
-
-    tweet_database = pd.read_csv("new_database.csv", lineterminator="\n")
-
+    tweet_database = merge_daily_to_master(daily_database)
+    print(f"----- 4. FINISHED AT {datetime.datetime.today()} -----")
 
     features_database = get_features(tweet_database)
     print(f"----- 5. FINISHED AT {datetime.datetime.today()} -----")
@@ -46,7 +41,6 @@ def run_app(start_time, end_time):
         daily_database,
         tweet_database
     )
-
     print(f"----- 6. FINISHED AT {datetime.datetime.today()} -----")
 
     rnn_model_predict(features_database)

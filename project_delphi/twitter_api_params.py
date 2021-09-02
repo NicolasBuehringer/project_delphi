@@ -1,16 +1,19 @@
 import os
-from dotenv import load_dotenv
-from os.path import join, dirname
+#from dotenv import load_dotenv
+#from os.path import join, dirname
+
+bearer_token = os.environ.get("BEARER_TOKEN")
 
 
-def get_credentials():
+def get_credentials(bearer_token):
 
-    dotenv_path = join(dirname(__file__),"..", '.env')
+    #dotenv_path = join(dirname(__file__),"..", '.env')
 
     #dotenv_path = "/Users/nicolas/code/NicolasBuehringer/project_delphi/.env"
-    load_dotenv(dotenv_path)
+    #load_dotenv(dotenv_path)
     # load secret bearer token from .env
-    bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
+    #bearer_token = os.environ.get("TWITTER_BEARER_TOKEN")
+
 
     # create authorization dict for the api
     headers = {"Authorization": f"Bearer {bearer_token}"}

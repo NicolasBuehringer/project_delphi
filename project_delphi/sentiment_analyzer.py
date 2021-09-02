@@ -46,7 +46,7 @@ def get_sentiment(raw_tweets):
     raw_tweets["sentiment"] = full_sentiment
 
 
-    raw_tweets.to_csv(f"raw_tweets_sentiment_{get_date_n_days_ago(1)}.csv", index=False)
+    #raw_tweets.to_csv(f"raw_tweets_sentiment_{get_date_n_days_ago(1)}.csv", index=False)
 
 
     # this isnt really raw_tweets anymore but dont want to redefine

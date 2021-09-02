@@ -14,7 +14,7 @@ def merge_daily_to_master(daily_database):
     and uploads the new master_database with new filename.
     Returns new_master_database for further usage
     """
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
 
     # get dates in format YYYY_MM_DD
     date_two_days_ago = get_date_n_days_ago(2)
@@ -24,7 +24,7 @@ def merge_daily_to_master(daily_database):
     old_master_database = pd.read_csv(
         f"gs://project_delphi_bucket/tweets/tweet_database_{date_two_days_ago[:10]}.csv", lineterminator="\n"
     )
-
+    print("Downloaded old database")
     # concat daily database with old master
     new_master_database = pd.concat([old_master_database, daily_database])
 
@@ -45,6 +45,6 @@ def merge_daily_to_master(daily_database):
     #blob.upload_from_string(
     #    f"tweet_database_{date_yesterday[:10]}.csv"
     #)
-
+    print("Uploaded new database")
     # return new_master_database for next function in run_app
     return new_master_database
