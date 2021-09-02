@@ -1,4 +1,5 @@
 import datetime
+from project_delphi.utils import get_date_n_days_ago
 import pandas as pd
 from germansentiment import SentimentModel
 from google.cloud import storage
@@ -15,12 +16,13 @@ def get_sentiment(raw_tweets):
     full_sentiment = []
 
     # set amount of analyzed tweets per iteration and maximum index
-    x = 500
+    x = 300
     max_len = len(raw_tweets) - 1
 
     # iterate over a range of 0, len_dataframe with step size 987
     for i in range(0,max_len, x):
-        print(i)
+
+        print(f"Analyzed the sentiment of {i} tweets")
         # slice dataframe for the current 987 rows
         temp = raw_tweets.iloc[i: (i + x)]
 
@@ -42,6 +44,10 @@ def get_sentiment(raw_tweets):
 
     # save sentiment as new column in raw_database
     raw_tweets["sentiment"] = full_sentiment
+
+
+    raw_tweets.to_csv(f"raw_tweets_sentiment_{get_date_n_days_ago(1)}.csv", index=False)
+
 
     # this isnt really raw_tweets anymore but dont want to redefine
     return raw_tweets

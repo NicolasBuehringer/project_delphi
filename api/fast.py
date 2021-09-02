@@ -29,4 +29,3 @@ def index():
 def execute_function(start_time=None, end_time=None):
     run_app(start_time, end_time)
     return "This finished"
-    #run_app(start_time, end_time)

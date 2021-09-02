@@ -153,6 +153,7 @@ def merge_date(df_prediction_2):
     prediction_date = get_date_n_days_ago().replace("_","-")
 
     df_prediction_2.index = [prediction_date]
+    df_prediction_2.index.name = "Date"
 
     return df_prediction_2
 
@@ -171,7 +172,8 @@ def update_predicition_db(df_prediction):
 
     # download old master_database
     old_master_database = pd.read_csv(
-        f"gs://project_delphi_bucket/streamlit/prediction_database/prediciton_{date_yesterday[:10]}.csv"
+        f"gs://project_delphi_bucket/streamlit/prediction_database/prediction_{date_yesterday[:10]}.csv",
+        index_col="Date"
     )
 
     # concat daily database with old master
@@ -181,7 +183,7 @@ def update_predicition_db(df_prediction):
     client = storage.Client()
 
     # define storage location
-    STORAGE_LOCATION = f"streamlit/prediction_database/prediciton_{date_today[:10]}.csv"
+    STORAGE_LOCATION = f"streamlit/prediction_database/prediction_{date_today[:10]}.csv"
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(STORAGE_LOCATION)
 
