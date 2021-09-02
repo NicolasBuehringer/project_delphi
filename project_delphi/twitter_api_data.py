@@ -190,9 +190,9 @@ def get_data(start_time, end_time):
         all_parties_df = pd.concat([all_parties_df, one_party_df], ignore_index=True)
 
     # save master DataFrame as a csv
-    all_parties_df.to_csv(
-        f"raw_tweets_{get_date_n_days_ago(1)}.csv", index=False
-    )
+    #all_parties_df.to_csv(
+    #    f"raw_tweets_{get_date_n_days_ago(1)}.csv", index=False
+    #)
 
 
     return all_parties_df

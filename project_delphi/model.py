@@ -164,7 +164,7 @@ def update_predicition_db(df_prediction):
     and uploads the new master_database with new filename.
     Returns new_master_database for further usage (streamlit)
     """
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
 
     # get dates in format YYYY_MM_DD
     date_yesterday = get_date_n_days_ago(1)
@@ -189,7 +189,7 @@ def update_predicition_db(df_prediction):
 
     # upload as csv
     print(f"Start upload DataFrame to {STORAGE_LOCATION}")
-    blob.upload_from_string(new_master_database.to_csv(index=False),
+    blob.upload_from_string(new_master_database.to_csv(),
                             'text/csv')
     print("Upload completed")
 

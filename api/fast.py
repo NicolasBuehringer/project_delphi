@@ -1,5 +1,5 @@
 from project_delphi.scheduler import run_app
-
+import os
 # $DELETE_BEGIN
 from datetime import datetime
 import pytz
@@ -31,5 +31,10 @@ def execute_function(start_time=None, end_time=None):
     return "This finished"
 
 @app.post("/test_api")
-def test_container():
-    return "Success"
+def test_container(key):
+    print(key)
+    print(os.getenv("DELPHI_KEY"))
+    if key == os.getenv("DELPHI_KEY"):
+        return "Success"
+    else:
+        return "Wrong Key"

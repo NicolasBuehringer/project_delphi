@@ -132,8 +132,8 @@ def no_of_tweets(daily_database, twitter_master_db):
 
 
 def upload_streamlit_data_to_gcp(df, filename, index=False):
-    os.environ[
-        "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    #os.environ[
+    #    "GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     client = storage.Client()
     STORAGE_LOCATION = f"streamlit/{filename}.csv"
     bucket = client.bucket(BUCKET_NAME)
@@ -155,7 +155,7 @@ def get_streamlit_data(feature_database, daily_database, twitter_master_db, days
     # ungroup database
     feature_database.reset_index(inplace=True)
 
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
+    #os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/nicolas/code/NicolasBuehringer/gcp/project-delphi-323909-05dee7633cbe.json"
     # Save Poll data as .csv and upload to GCP
     polls, latest_poll = poll_for_streamlit()
     upload_streamlit_data_to_gcp(polls, "polls", index=True)
