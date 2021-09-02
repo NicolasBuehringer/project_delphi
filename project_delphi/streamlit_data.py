@@ -50,7 +50,12 @@ def most_popular_tweets(df, tweet_date):
         'username', 'text', 'tweet_date', 'retweet_count', 'reply_count', 'like_count',
         'sentiment', "party"
     ]
-    #'username'
+
+    # Clean dataset columns:
+    df["retweet_count"] = df["retweet_count"].astype(int)
+    df["reply_count"] = df["reply_count"].astype(int)
+    df["like_count"] = df["like_count"].astype(int)
+    df["sentiment"] = df["sentiment"].astype(int)
 
     #Only keep relevant columns of Twitter dataframe
     df = df[columns]

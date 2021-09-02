@@ -56,7 +56,7 @@ def load_and_clean_csv(df):
     df['profile_creation_date'] = df['profile_creation_date'].str.slice(0,19)
     df["profile_creation_date"] = pd.to_datetime(df["profile_creation_date"])
     # Drop duplicates
-    df = df.drop_duplicates()
+    #df = df.drop_duplicates()
     # Transform sentiment to numeric type
     dict_to_numeric = {"negative": -2, "neutral": 1, "positive": 2}
     df["sentiment"].replace(dict_to_numeric, inplace=True)
