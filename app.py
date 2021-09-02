@@ -7,7 +7,7 @@ from io import BytesIO
 import pandas as pd
 import numpy as np
 import streamlit as st
-import requests
+#import requests
 import os
 
 #Set page layout to wide
@@ -39,7 +39,7 @@ else:
 
 
 def download_blob():
-    """Downloads a blob from the bucket."""
+    """Downloads the project delphi logo image from the bucket."""
     # The ID of your GCS bucket
     bucket_name = "project_delphi_bucket"
 
@@ -61,8 +61,8 @@ def download_blob():
 
 
 def get_data_from_gcp(path, index_column=None):
-    """method to get the training data (or a portion of it) from google cloud bucket"""
-    # Add Client() here
+    """method to get the required data from google cloud bucket"""
+
     client = storage.Client()
     #if local:
     #    path = "raw_data/most_liked_tweets.csv"
@@ -77,6 +77,8 @@ link_tweet_kpis = "gs://project_delphi_bucket/streamlit/tweet_kpis.csv"
 link_most_liked_tweets = "gs://project_delphi_bucket/streamlit/most_liked_tweets.csv"
 link_most_retweeted_tweets = "gs://project_delphi_bucket/streamlit/most_retweeted_tweets.csv"
 link_logo = "gs://project_delphi_bucket/streamlit/delphi_project_logo_dark.png"
+link_predicition = "gs://project_delphi_bucket/streamlit/prediction_database/prediciton_2021_09_01.csv"
+link_no_of_tweets = "gs://project_delphi_bucket/streamlit/no_of_tweets.csv"
 
 # ---------------------------------------------------------
 # API calls and assignment of variables
@@ -86,26 +88,27 @@ link_logo = "gs://project_delphi_bucket/streamlit/delphi_project_logo_dark.png"
 logo_img = download_blob()
 
 # Forecast from Delphi API
-url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
+#url_delphi = "https://delphi-xq2dtozlga-ew.a.run.app/"
 
-response = requests.get(url_delphi).json()
-AFD_forecast = float(response.get("AFD", 0.0))
-CDU_forecast = float(response.get("CDU", 0.0))
-FDP_forecast = float(response.get("FDP", 0.0))
-GRUENE_forecast = float(response.get("GRUENE", 0.0))
-LINKE_forecast = float(response.get("LINKE", 0.0))
-SPD_forecast = float(response.get("SPD", 0.0))
-OTHER_forecast = float(response.get("OTHER", 0.0))
+#response = requests.get(url_delphi).json()
+forecast = get_data_from_gcp(link_predicition, index_column="Unnamed: 0")
+AFD_forecast = round(forecast.iloc[-1]["AFD"], 3)*100
+CDU_forecast = round(forecast.iloc[-1]["CDU"], 3)*100
+FDP_forecast = round(forecast.iloc[-1]["FDP"], 3)*100
+GRUENE_forecast = round(forecast.iloc[-1]["GRUENE"], 3)*100
+LINKE_forecast = round(forecast.iloc[-1]["LINKE"], 3)*100
+SPD_forecast = round(forecast.iloc[-1]["SPD"], 3)*100
+OTHER_forecast = round(forecast.iloc[-1]["OTHER"], 3)*100
 
 # Current poll from DAWUM API
 current_poll = get_data_from_gcp(link_current_poll)
-AFD_poll = current_poll.loc[0,"AfD"]
-CDU_poll = current_poll.loc[0, "CDU/CSU"]
-FDP_poll = current_poll.loc[0, "FDP"]
-GRUENE_poll = current_poll.loc[0,"Grüne"]
-LINKE_poll = current_poll.loc[0,"Linke"]
-SPD_poll = current_poll.loc[0,"SPD"]
-OTHER_poll = current_poll.loc[0,"other"]
+AFD_poll = round(current_poll.loc[0,"AfD"],1)
+CDU_poll = round(current_poll.loc[0, "CDU/CSU"],1)
+FDP_poll = round(current_poll.loc[0, "FDP"],1)
+GRUENE_poll = round(current_poll.loc[0,"Grüne"],1)
+LINKE_poll = round(current_poll.loc[0,"Linke"],1)
+SPD_poll = round(current_poll.loc[0,"SPD"],1)
+OTHER_poll = round(current_poll.loc[0, "other"], 1)
 
 # Poll data and prediction over time
 historic_polls = get_data_from_gcp(link_historic_polls, index_column="Date")
@@ -115,7 +118,7 @@ historic_polls = historic_polls.tail(30)
 tweet_kpis = get_data_from_gcp(link_tweet_kpis)
 tweet_kpis['order'] = pd.Categorical(
     tweet_kpis['party'],
-    categories=['CDU', 'SPD', 'GRUENE', 'FDP', 'LINKE', 'AFD', 'OTHER'],
+    categories=['CDU', 'SPD', 'GRUENE', 'FDP', 'AFD', 'LINKE', 'OTHER'],
     ordered=True)
 tweet_kpis = tweet_kpis.sort_values('order')
 
@@ -123,6 +126,8 @@ tweet_kpis = tweet_kpis.sort_values('order')
 most_liked_tweets = get_data_from_gcp(link_most_liked_tweets)
 most_retweeted_tweets = get_data_from_gcp(link_most_retweeted_tweets)
 
+# No of todays and total no of Tweets in database
+no_of_tweets = get_data_from_gcp(link_no_of_tweets)
 
 # ---------------------------------------------------------
 # Streamlit layout
@@ -133,6 +138,7 @@ col0, col01 = st.columns((5,1))
 col0.title("German Federal Election forecast")
 col01.image(logo_img)
 
+
 '''
 Our goal is to create the most accurate forecast for the upcoming German federal elections on 26th September 2021
 using a state-of-the art deep learning algorithm trained on current poll and Twitter data.
@@ -141,7 +147,7 @@ using a state-of-the art deep learning algorithm trained on current poll and Twi
 '''
 ## Forecast
 '''
-col1, col2,  = st.columns((1,1))
+col1, col2,  = st.columns((1,1.2))
 
 #1st Chart: Half donut plot of delphi forecast
 col1.subheader("Our forecast")
@@ -157,8 +163,16 @@ label.append("")
 val.append(sum(val))  # 50% blank
 
 #Create plot
-fig1 = plt.figure(figsize=(7,7))
-plt.pie(val, wedgeprops=dict(width=0.5,edgecolor='w'), labels=label, colors=colors)
+fig1, ax0 = plt.subplots(figsize=(6.9,6.9))
+ax0.pie(val,
+        #autopct='%1.1f%%',
+        #pctdistance =0.75,
+        #textprops=dict(color="w"),
+        wedgeprops=dict(width=0.5, edgecolor='w'),
+        labels=label,
+        colors=colors)
+
+
 
 #save plot as png image
 fig1.savefig("forecast.png", bbox_inches='tight')
@@ -176,33 +190,35 @@ col1.image(s1)
 #-------------------------------------------------------------
 # 2nd Chart: Delphi vs. current poll (grouped bar chart)
 poll_date = current_poll.loc[0, "Date"]
-col2.subheader(f"Delphi vs. current poll as of {poll_date}")
+col2.subheader(f"Delphi forecast vs. current poll as of {poll_date}")
 
 # Label and colors for all following charts
-label = ["CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]
-colors = ["black", "red", "green", "yellow", "purple", "blue", "grey"]
+label = ["CDU/CSU", "SPD", "Grünen", "FDP", "AFD", "Linken", "Others"]
+colors = ["black", "red", "green", "yellow", "blue", "purple", "grey"]
 
 # Forecast (Delphi) and poll data
-forecast = [CDU_forecast, SPD_forecast, GRUENE_forecast, FDP_forecast, LINKE_forecast, AFD_forecast, OTHER_forecast]
-polls = [CDU_poll, SPD_poll, GRUENE_poll, FDP_poll, LINKE_poll, AFD_poll, OTHER_poll]
+forecast = [CDU_forecast, SPD_forecast, GRUENE_forecast, FDP_forecast, AFD_forecast, LINKE_forecast, OTHER_forecast]
+polls = [CDU_poll, SPD_poll, GRUENE_poll, FDP_poll, AFD_poll, LINKE_poll, OTHER_poll]
 
 # Label per bar
 x = np.arange(len(label))  # the label locations
-width = 0.35  # the width of the bars
+width = 0.4  # the width of the bars
 
 # Create plots
-fig, ax = plt.subplots(figsize=(6,3.5))
+fig, ax = plt.subplots(figsize=(6.8,3.5))
 rects1 = ax.bar(x - width/2, forecast, width, label='Delphi forecast', color=colors)
-rects2 = ax.bar(x + width/2, polls, width, label='Poll', color=["dimgray", "lightcoral", "yellowgreen", "gold", "plum", "cornflowerblue", "lightgray"])
+rects2 = ax.bar(x + width/2, polls, width, label='Poll', color=["dimgray", "lightcoral", "yellowgreen", "gold", "cornflowerblue", "plum", "lightgray"])
+
 
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_xticks(x)
 ax.set_xticklabels(label)
 ax.legend()
-ax.bar_label(rects1, padding=10)
-ax.bar_label(rects2, padding=3)
+ax.bar_label(rects1, padding=3, fmt='%.1f')
+ax.bar_label(rects2, padding=3,  fmt='%.1f')
 ymax = forecast +polls
 ax.set_ylim([0,max(ymax)+5])
+
 
 # Hide the right and top spines
 ax.spines['right'].set_visible(False)
@@ -228,12 +244,19 @@ st.markdown("""---""")
 
 #-------------------------------------------------------------
 # Twitter Insights
-col15, col16 = st.columns((3,1))
+col15, col001, col002, col16 = st.columns(4)
 
 col15.markdown("## Twitter Insights")
 col15.markdown("")
 col15.markdown("")
 col15.markdown("")
+
+# Total no. of tweets analyzed
+no_tweets_total = (no_of_tweets.iloc[0]["no_tweets_total"] / 1_000_000).round(1)
+col001.metric("Total # Tweets analyzed", f"{no_tweets_total} m")
+# No. of tweets today
+no_tweets_today = (no_of_tweets.iloc[0]["no_tweets_today"]/1000).round(1)
+col002.metric("# Tweets today", f"{no_tweets_today} k")
 
 #Select button to change behavoiur of Twitter KPI diagrams and displayed tweets
 parties_select = ["All", "CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]
@@ -242,47 +265,49 @@ selected_party = col16.selectbox("Filter for party", parties_select)
 # Twitter Key Metrics
 col11, col12, col13, col14 = st.columns((1,1,1,1))
 
-# Total no. of tweets analyzed
-# No. of tweets today
-
-
-
-label = ["CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]
-colors = ["black", "red", "green", "yellow", "purple", "blue", "grey"]
+label = ["CDU/CSU", "SPD", "Grünen", "FDP", "AFD", "Linken", "Others"]
+colors = ["black", "red", "green", "yellow", "blue", "purple", "grey"]
 
 # Change behavoiur of Twitter KPI diagrams and displayed tweets based on chosen party
 if selected_party=="All":
-    colors = ["black", "red", "green", "yellow", "purple", "blue", "grey"]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "OVERALL"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] == "OVERALL"].reset_index(drop=True)
+    party = "Overall"
 elif selected_party == "CDU/CSU":
     colors = [x if x =="black" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "CDU"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="CDU"].reset_index(drop=True)
+    party = "CDU/CSU"
 elif selected_party == "SPD":
     colors = [x if x == "red" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "SPD"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] == "SPD"].reset_index(drop=True)
+    party = "SPD"
 elif selected_party == "Grünen":
     colors = [x if x == "green" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "GRUENE"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="GRUENE"].reset_index(drop=True)
+    party = "Grünen"
 elif selected_party == "FDP":
     colors = [x if x == "yellow" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "FDP"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="FDP"].reset_index(drop=True)
+    party = "FDP"
 elif selected_party == "Linken":
     colors = [x if x == "purple" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "LINKE"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="LINKE"].reset_index(drop=True)
+    party = "Linken"
 elif selected_party == "AFD":
     colors = [x if x == "blue" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "AFD"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="AFD"].reset_index(drop=True)
+    party = "AFD"
 elif selected_party == "Others":
     colors = [x if x == "grey" else "lightgray" for x in colors]
     tweet_likes = most_liked_tweets[most_liked_tweets["party"] == "OTHER"].reset_index(drop=True)
     tweet_retweets = most_retweeted_tweets[most_retweeted_tweets["party"] =="OTHER"].reset_index(drop=True)
+    party = "Others"
 
 
 #4th Graph: Share of tweets per party
@@ -297,12 +322,14 @@ col11.image(buf)
 #5th Graph: Share of unique_users
 col12.markdown("**% unique users**")
 fig22, ax22 = plt.subplots(figsize=(3, 2.5))
-ax22.bar(x=tweet_kpis["party"],
+uu = ax22.bar(x=tweet_kpis["party"],
          height=tweet_kpis["share_unique_users"],
          color=colors)
 plt.xticks(rotation='vertical')
 ax22.set_xticks(x)
 ax22.set_xticklabels(label)
+ax22.set_ylim([0, 1])
+ax22.bar_label(uu, padding=3, fmt='%.1f')
 
 #Hide the right and top spines
 ax22.spines['right'].set_visible(False)
@@ -314,12 +341,14 @@ col12.image(buf)
 #6th Graph: Share of positive Tweets
 col13.markdown("**% positive Tweets**")
 fig23, ax23 = plt.subplots(figsize=(3, 2.5))
-ax23.bar(x=tweet_kpis["party"],
+po = ax23.bar(x=tweet_kpis["party"],
          height=tweet_kpis["share_of_positive_tweets"],
          color=colors)
 plt.xticks(rotation='vertical')
 ax23.set_xticks(x)
 ax23.set_xticklabels(label)
+ax23.set_ylim([0, 1])
+ax23.bar_label(po, padding=3, fmt='%.1f')
 
 # Hide the right and top spines
 ax23.spines['right'].set_visible(False)
@@ -331,12 +360,14 @@ col13.image(buf)
 #7th Graph: Share of negative Tweets
 col14.markdown("**% negative Tweets**")
 fig24, ax24 = plt.subplots(figsize=(3, 2.5))
-ax24.bar(x=tweet_kpis["party"],
+ng = ax24.bar(x=tweet_kpis["party"],
          height=tweet_kpis["share_of_negative_tweets"],
          color=colors)
 plt.xticks(rotation='vertical')
 ax24.set_xticks(x)
 ax24.set_xticklabels(label)
+ax24.set_ylim([0, 1])
+ax24.bar_label(ng, padding=3, fmt='%.1f')
 
 # Hide the right and top spines
 ax24.spines['right'].set_visible(False)
@@ -349,7 +380,7 @@ st.markdown("""---""")
 
 #-------------------------------------------------------------
 # Display of Todays most 💙 Tweets
-st.subheader("Todays most 💙 Tweets")
+st.subheader(f"Todays most 💙 Tweets - {party}")
 st.text("")
 col3, col4,  = st.columns((1,1))
 col31, col32, col33, col41, col42, col43 = st.columns((1,1,1,1,1,1))
@@ -386,7 +417,7 @@ st.markdown("""---""")
 
 #-------------------------------------------------------------
 # Display of Todays most 🔁 Tweets
-st.subheader("Todays most 🔁 Tweets")
+st.subheader(f"Todays most 🔁 Tweets - {party}")
 st.text("")
 
 col5, col6,  = st.columns((1,1))
