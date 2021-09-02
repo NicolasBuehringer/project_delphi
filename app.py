@@ -119,7 +119,6 @@ OTHER_poll = round(current_poll.loc[0, "other"], 1)
 
 # Poll data and prediction over time
 historic_polls = get_data_from_gcp(link_historic_polls, index_column="Date")
-historic_polls = historic_polls.tail(30)
 
 # Engineered Twitter Features (KPIs) via Delphi API
 tweet_kpis = get_data_from_gcp(link_tweet_kpis)
@@ -179,8 +178,6 @@ ax0.pie(val,
         labels=label,
         colors=colors)
 
-
-
 #save plot as png image
 fig1.savefig("forecast.png", bbox_inches='tight')
 
@@ -219,7 +216,6 @@ fig, ax = plt.subplots(figsize=(6.8,3.5))
 rects1 = ax.bar(x - width/2, forecast, width, label='Delphi forecast', color=colors)
 rects2 = ax.bar(x + width/2, polls, width, label='Poll', color=["dimgray", "lightcoral", "yellowgreen", "gold", "cornflowerblue", "plum", "lightgray"])
 
-
 # Add some text for labels, title and custom x-axis tick labels, etc.
 ax.set_xticks(x)
 ax.set_xticklabels(label)
@@ -244,12 +240,9 @@ col2.image(buf)
 
 #-------------------------------------------------------------
 # 3rd Graph: Timeline: Delphi vs. poll forecast
-st.subheader("Development of poll data per party over the last month")
+st.subheader("Development of poll data per party since end of May 2021")
 
-# Create Line chart to display historic poll data
-#st.line_chart(historic_polls)
-
-#plotly CHART
+# Create plotly Line chart to display historic poll data
 fig0010 = go.Figure()
 fig0010.add_trace(
     go.Scatter(x=historic_polls.index,
@@ -304,76 +297,6 @@ st.plotly_chart(fig0010)
 st.markdown("""---""")
 
 
-# ------------------------------------------------------------
-# 3rd Plotly
-
-# PLoty
-# x=historic_polls.index
-# fig000 = go.Figure()
-
-# fig000.add_trace(
-#     go.Scatter(
-#         x=x,
-#         y=historic_polls["CDU/CSU"],
-#         mode='lines',
-#         line=dict(width=0.5, color='black'),
-#         stackgroup='one',
-#         groupnorm=
-#         'percent'  # sets the normalization for the sum of the stackgroup
-#     ))
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["SPD"],
-#                mode='lines',
-#                line=dict(width=0.5, color='red'),
-#                stackgroup='one'))
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["Grüne"],
-#                mode='lines',
-#                line=dict(width=0.5, color='green'),
-#                stackgroup='one'))
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["FDP"],
-#                mode='lines',
-#                line=dict(width=0.5, color='yellow'),
-#                stackgroup='one'))
-
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["AfD"],
-#                mode='lines',
-#                line=dict(width=0.5, color='blue'),
-#                stackgroup='one'))
-
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["Linke"],
-#                mode='lines',
-#                line=dict(width=0.5, color='purple'),
-#                stackgroup='one'))
-
-# fig000.add_trace(
-#     go.Scatter(x=x,
-#                y=historic_polls["other"],
-#                mode='lines',
-#                line=dict(width=0.5, color='grey'),
-#                stackgroup='one'))
-
-# fig000.update_layout(
-#     showlegend=True,
-#     xaxis_type='category',
-#     yaxis=dict(
-#         type='linear',
-#         range=[1, 100],
-#         ticksuffix='%'),
-#     width=1300,
-#     height=400,
-#     margin=dict(l=20, r=20, b=20, t=20))
-
-# st.plotly_chart(fig000)
-
 #-------------------------------------------------------------
 # Twitter Insights
 col15, col001, col002, col16 = st.columns(4)
@@ -388,7 +311,7 @@ no_tweets_total = (no_of_tweets.iloc[0]["no_tweets_total"] / 1_000_000).round(1)
 col001.metric("Total # Tweets analyzed", f"{no_tweets_total} m")
 # No. of tweets yesterday
 no_tweets_today = (no_of_tweets.iloc[0]["no_tweets_today"]/1000).round(1)
-col002.metric("# yesterday's Tweets", f"{no_tweets_today} k")
+col002.metric("# Tweets yesterday", f"{no_tweets_today} k")
 
 #Select button to change behavoiur of Twitter KPI diagrams and displayed tweets
 parties_select = ["All", "CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]
