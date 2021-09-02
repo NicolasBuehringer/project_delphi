@@ -97,7 +97,7 @@ def creating_subsequences(df_train_scaled):
         return list_of_X, list_of_y
 
     # Creating subsequences of lenght specifided (28 / 7parties = 4 days)
-    X_train , y_train = multiple_subsequences(pd.DataFrame(df_train_scaled), 21 )
+    X_train , y_train = multiple_subsequences(pd.DataFrame(df_train_scaled), 28 )
 
     # Transforn to array to fit model
     X_train = np.array(X_train)
@@ -113,7 +113,7 @@ def rnn_fit_compile(X_train, y_train):
     model.add(layers.Dense(32, activation='relu'))
     model.add(layers.Dense(7, activation='linear'))
 
-    es = EarlyStopping(patience = 3, restore_best_weights=True)
+    es = EarlyStopping(patience = 14, restore_best_weights=True)
 
     model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
@@ -122,7 +122,8 @@ def rnn_fit_compile(X_train, y_train):
           batch_size=1,
           verbose=1,
           validation_split=0.2,
-          shuffle = False
+          shuffle = False,
+          callbacks=[es]
             )
 
     return model
