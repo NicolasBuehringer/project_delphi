@@ -254,9 +254,9 @@ col15.markdown("")
 # Total no. of tweets analyzed
 no_tweets_total = (no_of_tweets.iloc[0]["no_tweets_total"] / 1_000_000).round(1)
 col001.metric("Total # Tweets analyzed", f"{no_tweets_total} m")
-# No. of tweets today
+# No. of tweets yesterday
 no_tweets_today = (no_of_tweets.iloc[0]["no_tweets_today"]/1000).round(1)
-col002.metric("# Tweets today", f"{no_tweets_today} k")
+col002.metric("# Tweets yesterday", f"{no_tweets_today} k")
 
 #Select button to change behavoiur of Twitter KPI diagrams and displayed tweets
 parties_select = ["All", "CDU/CSU", "SPD", "Grünen", "FDP", "Linken", "AFD", "Others"]

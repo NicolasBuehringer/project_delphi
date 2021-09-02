@@ -152,7 +152,8 @@ def merge_date(df_prediction_2):
 
     prediction_date = get_date_n_days_ago().replace("_","-")
 
-    df_prediction_2.index = [prediction_date]
+    #df_prediction_2.index = [prediction_date]
+    df_prediction_2["Unnamed: 0"] = prediction_date
 
     return df_prediction_2
 
@@ -187,7 +188,7 @@ def update_predicition_db(df_prediction):
 
     # upload as csv
     print(f"Start upload DataFrame to {STORAGE_LOCATION}")
-    blob.upload_from_string(new_master_database.to_csv(),
+    blob.upload_from_string(new_master_database.to_csv(index=False),
                             'text/csv')
     print("Upload completed")
 
