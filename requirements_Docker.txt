@@ -8,7 +8,7 @@ wheel>=0.29
 numpy
 pandas
 scikit-learn
-tensorflow
+tensorflow>=2.6.0
 datetime
 
 # tests/linter
@@ -37,3 +37,4 @@ streamlit
 requests
 matplotlib
 python-dotenv
+germansentiment

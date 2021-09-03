@@ -113,12 +113,12 @@ def rnn_fit_compile(X_train, y_train):
     model.add(layers.Dense(32, activation='relu'))
     model.add(layers.Dense(7, activation='linear'))
 
-    es = EarlyStopping(patience = 3, restore_best_weights=True)
+    es = EarlyStopping(patience = 50, restore_best_weights=True)
 
     model.compile(loss='mse', optimizer='adam', metrics=['mae'])
 
     model.fit(X_train, y_train ,
-          epochs=40,
+          epochs=500,
           batch_size=1,
           verbose=1,
           validation_split=0.2,
