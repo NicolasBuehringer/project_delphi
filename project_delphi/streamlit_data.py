@@ -1,4 +1,3 @@
-import ipdb
 from project_delphi.polls_data_clean import clean_data
 from google.cloud import storage
 from project_delphi.params import BUCKET_NAME
