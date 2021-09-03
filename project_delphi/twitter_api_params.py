@@ -5,7 +5,7 @@ import os
 bearer_token = os.environ.get("BEARER_TOKEN")
 
 
-def get_credentials(bearer_token):
+def get_credentials(twitter_bearer_token=bearer_token):
 
     #dotenv_path = join(dirname(__file__),"..", '.env')
 
@@ -16,7 +16,7 @@ def get_credentials(bearer_token):
 
 
     # create authorization dict for the api
-    headers = {"Authorization": f"Bearer {bearer_token}"}
+    headers = {"Authorization": f"Bearer {twitter_bearer_token}"}
 
     return headers
 

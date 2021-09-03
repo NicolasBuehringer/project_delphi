@@ -84,7 +84,7 @@ link_tweet_kpis = "gs://project_delphi_bucket/streamlit/tweet_kpis.csv"
 link_most_liked_tweets = "gs://project_delphi_bucket/streamlit/most_liked_tweets.csv"
 link_most_retweeted_tweets = "gs://project_delphi_bucket/streamlit/most_retweeted_tweets.csv"
 link_logo = "gs://project_delphi_bucket/streamlit/delphi_project_logo_dark.png"
-link_predicition = f"gs://project_delphi_bucket/streamlit/prediction_database/prediction_{date_today}.csv"
+link_predicition = "gs://project_delphi_bucket/streamlit/prediction_database/prediction_database.csv"
 link_no_of_tweets = "gs://project_delphi_bucket/streamlit/no_of_tweets.csv"
 
 # ---------------------------------------------------------
