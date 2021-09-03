@@ -172,7 +172,7 @@ def update_predicition_db(df_prediction):
 
     # download old master_database
     old_master_database = pd.read_csv(
-        f"gs://project_delphi_bucket/streamlit/prediction_database/prediction_{date_yesterday[:10]}.csv",
+        f"gs://project_delphi_bucket/streamlit/prediction_database/prediction_database.csv",
         index_col="Date"
     )
 
@@ -183,7 +183,7 @@ def update_predicition_db(df_prediction):
     client = storage.Client()
 
     # define storage location
-    STORAGE_LOCATION = f"streamlit/prediction_database/prediction_{date_today[:10]}.csv"
+    STORAGE_LOCATION = f"streamlit/prediction_database/prediction_database.csv"
     bucket = client.bucket(BUCKET_NAME)
     blob = bucket.blob(STORAGE_LOCATION)
 
@@ -191,7 +191,19 @@ def update_predicition_db(df_prediction):
     print(f"Start upload DataFrame to {STORAGE_LOCATION}")
     blob.upload_from_string(new_master_database.to_csv(),
                             'text/csv')
-    print("Upload completed")
+    print("Upload Masterfile prediction completed")
+
+
+    # double saving as historic
+    client = storage.Client()
+    STORAGE_LOCATION = f"streamlit/prediction_database/prediction_{date_today[:10]}.csv"
+    bucket = client.bucket(BUCKET_NAME)
+    blob = bucket.blob(STORAGE_LOCATION)
+
+    # upload as csv
+    print(f"Start upload DataFrame to {STORAGE_LOCATION}")
+    blob.upload_from_string(new_master_database.to_csv(), 'text/csv')
+    print("Upload historic prediction file completed")
 
 
 
