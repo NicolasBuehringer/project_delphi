@@ -286,12 +286,12 @@ fig0010.add_trace(
                mode='lines',
                line=dict(color='gray'),
                name='Others'))
-fig0010.update_layout(width=1300,
+fig0010.update_layout(#width=1300,
                       height=400,
                       margin=dict(l=20, r=20, b=20, t=20),
                       yaxis=dict(ticksuffix='%'))
 
-st.plotly_chart(fig0010)
+st.plotly_chart(fig0010, use_container_width=True)
 
 
 st.markdown("""---""")
